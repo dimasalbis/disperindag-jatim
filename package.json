@@ -1,0 +1,11 @@
+{
+    "name": "pembuatan-mesin",
+    "version": "19.13.0",
+    "description": "pembuatan mesin",
+    "license": "SEE LICENSE IN LICENSE.md",
+    "private": true,
+    "dependencies": {},
+    "engines": {
+        "node": ">=16"
+    }
+}
