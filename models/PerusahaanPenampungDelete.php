@@ -373,6 +373,13 @@ class PerusahaanPenampungDelete extends PerusahaanPenampung
     public function run()
     {
         global $ExportType, $CustomExportType, $ExportFileName, $UserProfile, $Language, $Security, $CurrentForm;
+
+        // Update last accessed time
+        if (!$UserProfile->isValidUser(CurrentUserName(), session_id())) {
+            Write($Language->phrase("UserProfileCorrupted"));
+            $this->terminate();
+            return;
+        }
         $this->CurrentAction = Param("action"); // Set up current action
         $this->id->Visible = false;
         $this->nama_perusahaan->setVisibility();

@@ -171,7 +171,7 @@ $CONFIG = [
 
     // General
     "UNFORMAT_YEAR" => 50, // Unformat year
-    "RANDOM_KEY" => 'yzitGkVb61po8iRm', // Random key for encryption
+    "RANDOM_KEY" => 'HRTxfnOShKYvaTkh', // Random key for encryption
     "ENCRYPTION_KEY" => '', // Encryption key for data protection
     "PROJECT_STYLESHEET_FILENAME" => "css/buat_mesin.css", // Project stylesheet file name
     "PROJECT_CHARSET" => "utf-8", // Project charset
@@ -183,8 +183,8 @@ $CONFIG = [
     "CACHE" => false, // Cache
     "LAZY_LOAD" => true, // Lazy loading of images
     "BODY_CLASS" => "hold-transition layout-fixed",
-    "SIDEBAR_CLASS" => "main-sidebar sidebar-light-primary",
-    "NAVBAR_CLASS" => "main-header navbar navbar-expand navbar-gray navbar-dark",
+    "SIDEBAR_CLASS" => "main-sidebar sidebar-dark-primary",
+    "NAVBAR_CLASS" => "main-header navbar navbar-expand navbar-primary navbar-dark border-bottom-0",
 
     // Check Token
     "CHECK_TOKEN" => true,
@@ -266,7 +266,7 @@ $CONFIG = [
      * to login. Hashed password is irreversible, it will be reset during password recovery.
      */
     "ENCRYPTED_PASSWORD" => false, // Use encrypted password
-    "CASE_SENSITIVE_PASSWORD" => false, // Case-sensitive password
+    "CASE_SENSITIVE_PASSWORD" => true, // Case-sensitive password
 
     // Session timeout time
     "SESSION_TIMEOUT" => 0, // Session timeout time (minutes)
@@ -362,16 +362,16 @@ $CONFIG = [
     "USER_ID_FIELD_NAME" => "",
     "PARENT_USER_ID_FIELD_NAME" => "",
     "USER_LEVEL_FIELD_NAME" => "level",
-    "USER_PROFILE_FIELD_NAME" => "",
-    "REGISTER_ACTIVATE_FIELD_NAME" => "",
-    "USER_EMAIL_FIELD_NAME" => "",
+    "USER_PROFILE_FIELD_NAME" => "name",
+    "REGISTER_ACTIVATE_FIELD_NAME" => "email",
+    "USER_EMAIL_FIELD_NAME" => "email",
 
     // User table filters
     "USER_TABLE_DBID" => "DB",
     "USER_TABLE" => "`users`",
     "USER_NAME_FILTER" => "(`name` = '%u')",
     "USER_ID_FILTER" => "",
-    "USER_EMAIL_FILTER" => "",
+    "USER_EMAIL_FILTER" => "(`email` = '%e')",
     "USER_ACTIVATE_FILTER" => "",
 
     // User Profile Constants
@@ -382,7 +382,7 @@ $CONFIG = [
     "USER_PROFILE_LOGIN_RETRY_COUNT" => "LoginRetryCount",
     "USER_PROFILE_LAST_BAD_LOGIN_DATE_TIME" => "LastBadLoginDateTime",
     "USER_PROFILE_MAX_RETRY" => 3,
-    "USER_PROFILE_RETRY_LOCKOUT" => 20,
+    "USER_PROFILE_RETRY_LOCKOUT" => 3,
     "USER_PROFILE_LAST_PASSWORD_CHANGED_DATE" => "LastPasswordChangedDate",
     "USER_PROFILE_PASSWORD_EXPIRE" => 90,
     "USER_PROFILE_LANGUAGE_ID" => "LanguageId",
@@ -390,7 +390,7 @@ $CONFIG = [
     "SEARCH_FILTER_OPTION" => "Client",
 
     // Email
-    "SENDER_EMAIL" => "", // Sender email address
+    "SENDER_EMAIL" => "dimase.albi23@gmail.com", // Sender email address
     "RECIPIENT_EMAIL" => "", // Recipient email address
     "MAX_EMAIL_RECIPIENT" => 3,
     "MAX_EMAIL_SENT_COUNT" => 3,

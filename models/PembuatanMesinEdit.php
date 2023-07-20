@@ -118,6 +118,9 @@ class PembuatanMesinEdit extends PembuatanMesin
         global $Language, $DashboardReport, $DebugTimer;
         global $UserTable;
 
+        // Custom template
+        $this->UseCustomTemplate = true;
+
         // Initialize
         $GLOBALS["Page"] = &$this;
 
@@ -205,18 +208,25 @@ class PembuatanMesinEdit extends PembuatanMesin
 
         // Page is terminated
         $this->terminated = true;
+        if (Post("customexport") === null) {
+             // Page Unload event
+            if (method_exists($this, "pageUnload")) {
+                $this->pageUnload();
+            }
 
-         // Page Unload event
-        if (method_exists($this, "pageUnload")) {
-            $this->pageUnload();
+            // Global Page Unloaded event (in userfn*.php)
+            Page_Unloaded();
         }
-
-        // Global Page Unloaded event (in userfn*.php)
-        Page_Unloaded();
 
         // Export
         if ($this->CustomExport && $this->CustomExport == $this->Export && array_key_exists($this->CustomExport, Config("EXPORT_CLASSES"))) {
-            $content = $this->getContents();
+            if (is_array(Session(SESSION_TEMP_IMAGES))) { // Restore temp images
+                $TempImages = Session(SESSION_TEMP_IMAGES);
+            }
+            if (Post("data") !== null) {
+                $content = Post("data");
+            }
+            $ExportFileName = Post("filename", "");
             if ($ExportFileName == "") {
                 $ExportFileName = $this->TableVar;
             }
@@ -231,6 +241,11 @@ class PembuatanMesinEdit extends PembuatanMesin
                 }
                 DeleteTempImages(); // Delete temp images
                 return;
+            }
+        }
+        if ($this->CustomExport) { // Save temp images array for custom export
+            if (is_array($TempImages)) {
+                $_SESSION[SESSION_TEMP_IMAGES] = $TempImages;
             }
         }
         if (!IsApi() && method_exists($this, "pageRedirecting")) {
@@ -369,9 +384,6 @@ class PembuatanMesinEdit extends PembuatanMesin
      */
     protected function hideFieldsForAddEdit()
     {
-        if ($this->isAdd() || $this->isCopy() || $this->isGridAdd()) {
-            $this->id->Visible = false;
-        }
     }
 
     // Lookup data
@@ -464,6 +476,13 @@ class PembuatanMesinEdit extends PembuatanMesin
         // Is modal
         $this->IsModal = Param("modal") == "1";
 
+        // Update last accessed time
+        if (!$UserProfile->isValidUser(CurrentUserName(), session_id())) {
+            Write($Language->phrase("UserProfileCorrupted"));
+            $this->terminate();
+            return;
+        }
+
         // Create form object
         $CurrentForm = new HttpForm();
         $this->CurrentAction = Param("action"); // Set up current action
@@ -477,8 +496,10 @@ class PembuatanMesinEdit extends PembuatanMesin
         $this->nomor_kontrak->setVisibility();
         $this->tanggal_kontrak->setVisibility();
         $this->nilai_kontrak->setVisibility();
+        $this->foto_kontrak->setVisibility();
         $this->upload_ktp->setVisibility();
         $this->foto_mesin->setVisibility();
+        $this->status->setVisibility();
         $this->created_at->Visible = false;
         $this->updated_at->Visible = false;
         $this->hideFieldsForAddEdit();
@@ -695,6 +716,9 @@ class PembuatanMesinEdit extends PembuatanMesin
     protected function getUploadFiles()
     {
         global $CurrentForm, $Language;
+        $this->foto_kontrak->Upload->Index = $CurrentForm->Index;
+        $this->foto_kontrak->Upload->uploadFile();
+        $this->foto_kontrak->CurrentValue = $this->foto_kontrak->Upload->FileName;
         $this->upload_ktp->Upload->Index = $CurrentForm->Index;
         $this->upload_ktp->Upload->uploadFile();
         $this->upload_ktp->CurrentValue = $this->upload_ktp->Upload->FileName;
@@ -800,6 +824,16 @@ class PembuatanMesinEdit extends PembuatanMesin
             }
         }
 
+        // Check field name 'status' first before field var 'x_status'
+        $val = $CurrentForm->hasValue("status") ? $CurrentForm->getValue("status") : $CurrentForm->getValue("x_status");
+        if (!$this->status->IsDetailKey) {
+            if (IsApi() && $val === null) {
+                $this->status->Visible = false; // Disable update for API request
+            } else {
+                $this->status->setFormValue($val);
+            }
+        }
+
         // Check field name 'id' first before field var 'x_id'
         $val = $CurrentForm->hasValue("id") ? $CurrentForm->getValue("id") : $CurrentForm->getValue("x_id");
         if (!$this->id->IsDetailKey) {
@@ -823,6 +857,7 @@ class PembuatanMesinEdit extends PembuatanMesin
         $this->tanggal_kontrak->CurrentValue = $this->tanggal_kontrak->FormValue;
         $this->tanggal_kontrak->CurrentValue = UnFormatDateTime($this->tanggal_kontrak->CurrentValue, 0);
         $this->nilai_kontrak->CurrentValue = $this->nilai_kontrak->FormValue;
+        $this->status->CurrentValue = $this->status->FormValue;
     }
 
     // Load recordset
@@ -903,10 +938,13 @@ class PembuatanMesinEdit extends PembuatanMesin
         $this->nomor_kontrak->setDbValue($row['nomor_kontrak']);
         $this->tanggal_kontrak->setDbValue($row['tanggal_kontrak']);
         $this->nilai_kontrak->setDbValue($row['nilai_kontrak']);
+        $this->foto_kontrak->Upload->DbValue = $row['foto_kontrak'];
+        $this->foto_kontrak->setDbValue($this->foto_kontrak->Upload->DbValue);
         $this->upload_ktp->Upload->DbValue = $row['upload_ktp'];
         $this->upload_ktp->setDbValue($this->upload_ktp->Upload->DbValue);
         $this->foto_mesin->Upload->DbValue = $row['foto_mesin'];
         $this->foto_mesin->setDbValue($this->foto_mesin->Upload->DbValue);
+        $this->status->setDbValue($row['status']);
         $this->created_at->setDbValue($row['created_at']);
         $this->updated_at->setDbValue($row['updated_at']);
     }
@@ -925,8 +963,10 @@ class PembuatanMesinEdit extends PembuatanMesin
         $row['nomor_kontrak'] = null;
         $row['tanggal_kontrak'] = null;
         $row['nilai_kontrak'] = null;
+        $row['foto_kontrak'] = null;
         $row['upload_ktp'] = null;
         $row['foto_mesin'] = null;
+        $row['status'] = null;
         $row['created_at'] = null;
         $row['updated_at'] = null;
         return $row;
@@ -980,9 +1020,13 @@ class PembuatanMesinEdit extends PembuatanMesin
 
         // nilai_kontrak
 
+        // foto_kontrak
+
         // upload_ktp
 
         // foto_mesin
+
+        // status
 
         // created_at
 
@@ -1029,6 +1073,17 @@ class PembuatanMesinEdit extends PembuatanMesin
             $this->nilai_kontrak->ViewValue = $this->nilai_kontrak->CurrentValue;
             $this->nilai_kontrak->ViewCustomAttributes = "";
 
+            // foto_kontrak
+            if (!EmptyValue($this->foto_kontrak->Upload->DbValue)) {
+                $this->foto_kontrak->ImageWidth = 200;
+                $this->foto_kontrak->ImageHeight = 0;
+                $this->foto_kontrak->ImageAlt = $this->foto_kontrak->alt();
+                $this->foto_kontrak->ViewValue = $this->foto_kontrak->Upload->DbValue;
+            } else {
+                $this->foto_kontrak->ViewValue = "";
+            }
+            $this->foto_kontrak->ViewCustomAttributes = "";
+
             // upload_ktp
             if (!EmptyValue($this->upload_ktp->Upload->DbValue)) {
                 $this->upload_ktp->ImageWidth = 200;
@@ -1050,6 +1105,14 @@ class PembuatanMesinEdit extends PembuatanMesin
                 $this->foto_mesin->ViewValue = "";
             }
             $this->foto_mesin->ViewCustomAttributes = "";
+
+            // status
+            if (strval($this->status->CurrentValue) != "") {
+                $this->status->ViewValue = $this->status->optionCaption($this->status->CurrentValue);
+            } else {
+                $this->status->ViewValue = null;
+            }
+            $this->status->ViewCustomAttributes = "";
 
             // created_at
             $this->created_at->ViewValue = $this->created_at->CurrentValue;
@@ -1106,6 +1169,27 @@ class PembuatanMesinEdit extends PembuatanMesin
             $this->nilai_kontrak->HrefValue = "";
             $this->nilai_kontrak->TooltipValue = "";
 
+            // foto_kontrak
+            $this->foto_kontrak->LinkCustomAttributes = "";
+            if (!EmptyValue($this->foto_kontrak->Upload->DbValue)) {
+                $this->foto_kontrak->HrefValue = GetFileUploadUrl($this->foto_kontrak, $this->foto_kontrak->htmlDecode($this->foto_kontrak->Upload->DbValue)); // Add prefix/suffix
+                $this->foto_kontrak->LinkAttrs["target"] = ""; // Add target
+                if ($this->isExport()) {
+                    $this->foto_kontrak->HrefValue = FullUrl($this->foto_kontrak->HrefValue, "href");
+                }
+            } else {
+                $this->foto_kontrak->HrefValue = "";
+            }
+            $this->foto_kontrak->ExportHrefValue = $this->foto_kontrak->UploadPath . $this->foto_kontrak->Upload->DbValue;
+            $this->foto_kontrak->TooltipValue = "";
+            if ($this->foto_kontrak->UseColorbox) {
+                if (EmptyValue($this->foto_kontrak->TooltipValue)) {
+                    $this->foto_kontrak->LinkAttrs["title"] = $Language->phrase("ViewImageGallery");
+                }
+                $this->foto_kontrak->LinkAttrs["data-rel"] = "pembuatan_mesin_x_foto_kontrak";
+                $this->foto_kontrak->LinkAttrs->appendClass("ew-lightbox");
+            }
+
             // upload_ktp
             $this->upload_ktp->LinkCustomAttributes = "";
             if (!EmptyValue($this->upload_ktp->Upload->DbValue)) {
@@ -1147,6 +1231,11 @@ class PembuatanMesinEdit extends PembuatanMesin
                 $this->foto_mesin->LinkAttrs["data-rel"] = "pembuatan_mesin_x_foto_mesin";
                 $this->foto_mesin->LinkAttrs->appendClass("ew-lightbox");
             }
+
+            // status
+            $this->status->LinkCustomAttributes = "";
+            $this->status->HrefValue = "";
+            $this->status->TooltipValue = "";
         } elseif ($this->RowType == ROWTYPE_EDIT) {
             // nama_mesin
             $this->nama_mesin->EditAttrs["class"] = "form-control";
@@ -1223,6 +1312,24 @@ class PembuatanMesinEdit extends PembuatanMesin
             $this->nilai_kontrak->EditValue = HtmlEncode($this->nilai_kontrak->CurrentValue);
             $this->nilai_kontrak->PlaceHolder = RemoveHtml($this->nilai_kontrak->caption());
 
+            // foto_kontrak
+            $this->foto_kontrak->EditAttrs["class"] = "form-control";
+            $this->foto_kontrak->EditCustomAttributes = "";
+            if (!EmptyValue($this->foto_kontrak->Upload->DbValue)) {
+                $this->foto_kontrak->ImageWidth = 200;
+                $this->foto_kontrak->ImageHeight = 0;
+                $this->foto_kontrak->ImageAlt = $this->foto_kontrak->alt();
+                $this->foto_kontrak->EditValue = $this->foto_kontrak->Upload->DbValue;
+            } else {
+                $this->foto_kontrak->EditValue = "";
+            }
+            if (!EmptyValue($this->foto_kontrak->CurrentValue)) {
+                $this->foto_kontrak->Upload->FileName = $this->foto_kontrak->CurrentValue;
+            }
+            if ($this->isShow()) {
+                RenderUploadField($this->foto_kontrak);
+            }
+
             // upload_ktp
             $this->upload_ktp->EditAttrs["class"] = "form-control";
             $this->upload_ktp->EditCustomAttributes = "";
@@ -1258,6 +1365,12 @@ class PembuatanMesinEdit extends PembuatanMesin
             if ($this->isShow()) {
                 RenderUploadField($this->foto_mesin);
             }
+
+            // status
+            $this->status->EditAttrs["class"] = "form-control";
+            $this->status->EditCustomAttributes = "";
+            $this->status->EditValue = $this->status->options(true);
+            $this->status->PlaceHolder = RemoveHtml($this->status->caption());
 
             // Edit refer script
 
@@ -1297,6 +1410,19 @@ class PembuatanMesinEdit extends PembuatanMesin
             $this->nilai_kontrak->LinkCustomAttributes = "";
             $this->nilai_kontrak->HrefValue = "";
 
+            // foto_kontrak
+            $this->foto_kontrak->LinkCustomAttributes = "";
+            if (!EmptyValue($this->foto_kontrak->Upload->DbValue)) {
+                $this->foto_kontrak->HrefValue = GetFileUploadUrl($this->foto_kontrak, $this->foto_kontrak->htmlDecode($this->foto_kontrak->Upload->DbValue)); // Add prefix/suffix
+                $this->foto_kontrak->LinkAttrs["target"] = ""; // Add target
+                if ($this->isExport()) {
+                    $this->foto_kontrak->HrefValue = FullUrl($this->foto_kontrak->HrefValue, "href");
+                }
+            } else {
+                $this->foto_kontrak->HrefValue = "";
+            }
+            $this->foto_kontrak->ExportHrefValue = $this->foto_kontrak->UploadPath . $this->foto_kontrak->Upload->DbValue;
+
             // upload_ktp
             $this->upload_ktp->LinkCustomAttributes = "";
             if (!EmptyValue($this->upload_ktp->Upload->DbValue)) {
@@ -1322,6 +1448,10 @@ class PembuatanMesinEdit extends PembuatanMesin
                 $this->foto_mesin->HrefValue = "";
             }
             $this->foto_mesin->ExportHrefValue = $this->foto_mesin->UploadPath . $this->foto_mesin->Upload->DbValue;
+
+            // status
+            $this->status->LinkCustomAttributes = "";
+            $this->status->HrefValue = "";
         }
         if ($this->RowType == ROWTYPE_ADD || $this->RowType == ROWTYPE_EDIT || $this->RowType == ROWTYPE_SEARCH) { // Add/Edit/Search row
             $this->setupFieldTitles();
@@ -1330,6 +1460,11 @@ class PembuatanMesinEdit extends PembuatanMesin
         // Call Row Rendered event
         if ($this->RowType != ROWTYPE_AGGREGATEINIT) {
             $this->rowRendered();
+        }
+
+        // Save data for Custom Template
+        if ($this->RowType == ROWTYPE_VIEW || $this->RowType == ROWTYPE_EDIT || $this->RowType == ROWTYPE_ADD) {
+            $this->Rows[] = $this->customTemplateFieldValues();
         }
     }
 
@@ -1390,6 +1525,11 @@ class PembuatanMesinEdit extends PembuatanMesin
                 $this->nilai_kontrak->addErrorMessage(str_replace("%s", $this->nilai_kontrak->caption(), $this->nilai_kontrak->RequiredErrorMessage));
             }
         }
+        if ($this->foto_kontrak->Required) {
+            if ($this->foto_kontrak->Upload->FileName == "" && !$this->foto_kontrak->Upload->KeepFile) {
+                $this->foto_kontrak->addErrorMessage(str_replace("%s", $this->foto_kontrak->caption(), $this->foto_kontrak->RequiredErrorMessage));
+            }
+        }
         if ($this->upload_ktp->Required) {
             if ($this->upload_ktp->Upload->FileName == "" && !$this->upload_ktp->Upload->KeepFile) {
                 $this->upload_ktp->addErrorMessage(str_replace("%s", $this->upload_ktp->caption(), $this->upload_ktp->RequiredErrorMessage));
@@ -1398,6 +1538,11 @@ class PembuatanMesinEdit extends PembuatanMesin
         if ($this->foto_mesin->Required) {
             if ($this->foto_mesin->Upload->FileName == "" && !$this->foto_mesin->Upload->KeepFile) {
                 $this->foto_mesin->addErrorMessage(str_replace("%s", $this->foto_mesin->caption(), $this->foto_mesin->RequiredErrorMessage));
+            }
+        }
+        if ($this->status->Required) {
+            if (!$this->status->IsDetailKey && EmptyValue($this->status->FormValue)) {
+                $this->status->addErrorMessage(str_replace("%s", $this->status->caption(), $this->status->RequiredErrorMessage));
             }
         }
 
@@ -1459,6 +1604,18 @@ class PembuatanMesinEdit extends PembuatanMesin
             // nilai_kontrak
             $this->nilai_kontrak->setDbValueDef($rsnew, $this->nilai_kontrak->CurrentValue, "", $this->nilai_kontrak->ReadOnly);
 
+            // foto_kontrak
+            if ($this->foto_kontrak->Visible && !$this->foto_kontrak->ReadOnly && !$this->foto_kontrak->Upload->KeepFile) {
+                $this->foto_kontrak->Upload->DbValue = $rsold['foto_kontrak']; // Get original value
+                if ($this->foto_kontrak->Upload->FileName == "") {
+                    $rsnew['foto_kontrak'] = null;
+                } else {
+                    $rsnew['foto_kontrak'] = $this->foto_kontrak->Upload->FileName;
+                }
+                $this->foto_kontrak->ImageWidth = 1000; // Resize width
+                $this->foto_kontrak->ImageHeight = 0; // Resize height
+            }
+
             // upload_ktp
             if ($this->upload_ktp->Visible && !$this->upload_ktp->ReadOnly && !$this->upload_ktp->Upload->KeepFile) {
                 $this->upload_ktp->Upload->DbValue = $rsold['upload_ktp']; // Get original value
@@ -1481,6 +1638,50 @@ class PembuatanMesinEdit extends PembuatanMesin
                 }
                 $this->foto_mesin->ImageWidth = 1000; // Resize width
                 $this->foto_mesin->ImageHeight = 0; // Resize height
+            }
+
+            // status
+            $this->status->setDbValueDef($rsnew, $this->status->CurrentValue, "", $this->status->ReadOnly);
+            if ($this->foto_kontrak->Visible && !$this->foto_kontrak->Upload->KeepFile) {
+                $oldFiles = EmptyValue($this->foto_kontrak->Upload->DbValue) ? [] : [$this->foto_kontrak->htmlDecode($this->foto_kontrak->Upload->DbValue)];
+                if (!EmptyValue($this->foto_kontrak->Upload->FileName)) {
+                    $newFiles = [$this->foto_kontrak->Upload->FileName];
+                    $NewFileCount = count($newFiles);
+                    for ($i = 0; $i < $NewFileCount; $i++) {
+                        if ($newFiles[$i] != "") {
+                            $file = $newFiles[$i];
+                            $tempPath = UploadTempPath($this->foto_kontrak, $this->foto_kontrak->Upload->Index);
+                            if (file_exists($tempPath . $file)) {
+                                if (Config("DELETE_UPLOADED_FILES")) {
+                                    $oldFileFound = false;
+                                    $oldFileCount = count($oldFiles);
+                                    for ($j = 0; $j < $oldFileCount; $j++) {
+                                        $oldFile = $oldFiles[$j];
+                                        if ($oldFile == $file) { // Old file found, no need to delete anymore
+                                            array_splice($oldFiles, $j, 1);
+                                            $oldFileFound = true;
+                                            break;
+                                        }
+                                    }
+                                    if ($oldFileFound) { // No need to check if file exists further
+                                        continue;
+                                    }
+                                }
+                                $file1 = UniqueFilename($this->foto_kontrak->physicalUploadPath(), $file); // Get new file name
+                                if ($file1 != $file) { // Rename temp file
+                                    while (file_exists($tempPath . $file1) || file_exists($this->foto_kontrak->physicalUploadPath() . $file1)) { // Make sure no file name clash
+                                        $file1 = UniqueFilename([$this->foto_kontrak->physicalUploadPath(), $tempPath], $file1, true); // Use indexed name
+                                    }
+                                    rename($tempPath . $file, $tempPath . $file1);
+                                    $newFiles[$i] = $file1;
+                                }
+                            }
+                        }
+                    }
+                    $this->foto_kontrak->Upload->DbValue = empty($oldFiles) ? "" : implode(Config("MULTIPLE_UPLOAD_SEPARATOR"), $oldFiles);
+                    $this->foto_kontrak->Upload->FileName = implode(Config("MULTIPLE_UPLOAD_SEPARATOR"), $newFiles);
+                    $this->foto_kontrak->setDbValueDef($rsnew, $this->foto_kontrak->Upload->FileName, null, $this->foto_kontrak->ReadOnly);
+                }
             }
             if ($this->upload_ktp->Visible && !$this->upload_ktp->Upload->KeepFile) {
                 $oldFiles = EmptyValue($this->upload_ktp->Upload->DbValue) ? [] : [$this->upload_ktp->htmlDecode($this->upload_ktp->Upload->DbValue)];
@@ -1578,6 +1779,37 @@ class PembuatanMesinEdit extends PembuatanMesin
                     $editRow = true; // No field to update
                 }
                 if ($editRow) {
+                    if ($this->foto_kontrak->Visible && !$this->foto_kontrak->Upload->KeepFile) {
+                        $oldFiles = EmptyValue($this->foto_kontrak->Upload->DbValue) ? [] : [$this->foto_kontrak->htmlDecode($this->foto_kontrak->Upload->DbValue)];
+                        if (!EmptyValue($this->foto_kontrak->Upload->FileName)) {
+                            $newFiles = [$this->foto_kontrak->Upload->FileName];
+                            $newFiles2 = [$this->foto_kontrak->htmlDecode($rsnew['foto_kontrak'])];
+                            $newFileCount = count($newFiles);
+                            for ($i = 0; $i < $newFileCount; $i++) {
+                                if ($newFiles[$i] != "") {
+                                    $file = UploadTempPath($this->foto_kontrak, $this->foto_kontrak->Upload->Index) . $newFiles[$i];
+                                    if (file_exists($file)) {
+                                        if (@$newFiles2[$i] != "") { // Use correct file name
+                                            $newFiles[$i] = $newFiles2[$i];
+                                        }
+                                        if (!$this->foto_kontrak->Upload->ResizeAndSaveToFile($this->foto_kontrak->ImageWidth, $this->foto_kontrak->ImageHeight, 100, $newFiles[$i], true, $i)) {
+                                            $this->setFailureMessage($Language->phrase("UploadErrMsg7"));
+                                            return false;
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            $newFiles = [];
+                        }
+                        if (Config("DELETE_UPLOADED_FILES")) {
+                            foreach ($oldFiles as $oldFile) {
+                                if ($oldFile != "" && !in_array($oldFile, $newFiles)) {
+                                    @unlink($this->foto_kontrak->oldPhysicalUploadPath() . $oldFile);
+                                }
+                            }
+                        }
+                    }
                     if ($this->upload_ktp->Visible && !$this->upload_ktp->Upload->KeepFile) {
                         $oldFiles = EmptyValue($this->upload_ktp->Upload->DbValue) ? [] : [$this->upload_ktp->htmlDecode($this->upload_ktp->Upload->DbValue)];
                         if (!EmptyValue($this->upload_ktp->Upload->FileName)) {
@@ -1661,6 +1893,9 @@ class PembuatanMesinEdit extends PembuatanMesin
 
         // Clean upload path if any
         if ($editRow) {
+            // foto_kontrak
+            CleanUploadTempPath($this->foto_kontrak, $this->foto_kontrak->Upload->Index);
+
             // upload_ktp
             CleanUploadTempPath($this->upload_ktp, $this->upload_ktp->Upload->Index);
 
@@ -1700,6 +1935,8 @@ class PembuatanMesinEdit extends PembuatanMesin
 
             // Set up lookup SQL and connection
             switch ($fld->FieldVar) {
+                case "x_status":
+                    break;
                 default:
                     $lookupFilter = "";
                     break;

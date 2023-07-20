@@ -303,7 +303,7 @@ loadjs.ready("datetimepicker", function() {
     <!-- Main Sidebar Container -->
     <aside class="<?= Config("SIDEBAR_CLASS") ?>">
         <!-- Brand Logo //** Note: Only licensed users are allowed to change the logo ** -->
-        <a href="#" class="brand-link bg-gray-light">
+        <a href="#" class="brand-link">
             <img src="<?= GetUrl("images/jatim.png") ?>" alt="" class="brand-image ew-brand-image">
         </a>
         <!-- Sidebar -->

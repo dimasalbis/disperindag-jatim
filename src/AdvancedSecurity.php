@@ -495,6 +495,29 @@ class AdvancedSecurity
             $sql = $UserTable->getSql($filter);
             if ($row = Conn($UserTable->Dbid)->fetchAssoc($sql)) {
                 $valid = $customValid || ComparePassword(GetUserInfo(Config("LOGIN_PASSWORD_FIELD_NAME"), $row), $pwd);
+
+                // Set up retry count from manual login
+                if (!$autologin) {
+                    $UserProfile->loadProfileFromDatabase($usr);
+                    if (!$valid) {
+                        $retrycount = $UserProfile->getValue(Config("USER_PROFILE_LOGIN_RETRY_COUNT"));
+                        $retrycount++;
+                        $UserProfile->setValue(Config("USER_PROFILE_LOGIN_RETRY_COUNT"), $retrycount);
+                        $UserProfile->setValue(Config("USER_PROFILE_LAST_BAD_LOGIN_DATE_TIME"), StdCurrentDateTime());
+                    } else {
+                        $UserProfile->setValue(Config("USER_PROFILE_LOGIN_RETRY_COUNT"), 0);
+                    }
+                    $UserProfile->saveProfileToDatabase($usr); // Save profile
+                }
+
+                // Check concurrent user login
+                if ($valid) {
+                    if ($UserProfile->isValidUser($usr, session_id())) {
+                    } else {
+                        $_SESSION[SESSION_FAILURE_MESSAGE] = str_replace("%u", $usr, $Language->phrase("UserLoggedIn"));
+                        $valid = false;
+                    }
+                }
                 if ($valid) {
                     $this->isLoggedIn = true;
                     $_SESSION[SESSION_STATUS] = "login";
@@ -1114,6 +1137,12 @@ class AdvancedSecurity
             $this->UserLevel = Session(SESSION_AR_USER_LEVEL);
             $this->UserLevelPriv = Session(SESSION_AR_USER_LEVEL_PRIV);
         }
+    }
+
+    // Get user email
+    public function currentUserEmail()
+    {
+        return $this->currentUserInfo(Config("USER_EMAIL_FIELD_NAME"));
     }
 
     // Get current user info

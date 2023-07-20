@@ -558,6 +558,13 @@ class UsersList extends Users
     public function run()
     {
         global $ExportType, $CustomExportType, $ExportFileName, $UserProfile, $Language, $Security, $CurrentForm;
+
+        // Update last accessed time
+        if (!$UserProfile->isValidUser(CurrentUserName(), session_id())) {
+            Write($Language->phrase("UserProfileCorrupted"));
+            $this->terminate();
+            return;
+        }
         $this->CurrentAction = Param("action"); // Set up current action
 
         // Get grid add count
@@ -568,14 +575,14 @@ class UsersList extends Users
 
         // Set up list options
         $this->setupListOptions();
-        $this->id->setVisibility();
+        $this->id->Visible = false;
         $this->name->setVisibility();
         $this->_email->setVisibility();
-        $this->email_verified_at->setVisibility();
+        $this->email_verified_at->Visible = false;
         $this->_password->setVisibility();
-        $this->remember_token->setVisibility();
-        $this->created_at->setVisibility();
-        $this->updated_at->setVisibility();
+        $this->remember_token->Visible = false;
+        $this->created_at->Visible = false;
+        $this->updated_at->Visible = false;
         $this->level->setVisibility();
         $this->hideFieldsForAddEdit();
 
@@ -589,6 +596,8 @@ class UsersList extends Users
 
         // Setup other options
         $this->setupOtherOptions();
+        $this->ListActions->add("resendregisteremail", $Language->phrase("ResendRegisterEmailBtn"), IsAdmin(), ACTION_AJAX, ACTION_SINGLE);
+        $this->ListActions->add("resetloginretry", $Language->phrase("ResetLoginRetryBtn"), IsAdmin(), ACTION_AJAX, ACTION_SINGLE);
 
         // Set up custom action (compatible with old version)
         foreach ($this->CustomActions as $name => $action) {
@@ -868,6 +877,11 @@ class UsersList extends Users
         // Initialize
         $filterList = "";
         $savedFilterList = "";
+
+        // Load server side filters
+        if (Config("SEARCH_FILTER_OPTION") == "Server" && isset($UserProfile)) {
+            $savedFilterList = $UserProfile->getSearchFilters(CurrentUserName(), "fuserslistsrch");
+        }
         $filterList = Concat($filterList, $this->id->AdvancedSearch->toJson(), ","); // Field id
         $filterList = Concat($filterList, $this->name->AdvancedSearch->toJson(), ","); // Field name
         $filterList = Concat($filterList, $this->_email->AdvancedSearch->toJson(), ","); // Field email
@@ -1162,14 +1176,9 @@ class UsersList extends Users
         if (Get("order") !== null) {
             $this->CurrentOrder = Get("order");
             $this->CurrentOrderType = Get("ordertype", "");
-            $this->updateSort($this->id); // id
             $this->updateSort($this->name); // name
             $this->updateSort($this->_email); // email
-            $this->updateSort($this->email_verified_at); // email_verified_at
             $this->updateSort($this->_password); // password
-            $this->updateSort($this->remember_token); // remember_token
-            $this->updateSort($this->created_at); // created_at
-            $this->updateSort($this->updated_at); // updated_at
             $this->updateSort($this->level); // level
             $this->setStartRecordNumber(1); // Reset start position
         }
@@ -1274,9 +1283,9 @@ class UsersList extends Users
         $item->ShowInButtonGroup = false;
 
         // Drop down button for ListOptions
-        $this->ListOptions->UseDropDownButton = true;
+        $this->ListOptions->UseDropDownButton = false;
         $this->ListOptions->DropDownButtonPhrase = $Language->phrase("ButtonListOptions");
-        $this->ListOptions->UseButtonGroup = false;
+        $this->ListOptions->UseButtonGroup = true;
         if ($this->ListOptions->UseButtonGroup && IsMobile()) {
             $this->ListOptions->UseDropDownButton = true;
         }
@@ -1450,6 +1459,7 @@ class UsersList extends Users
     protected function processListAction()
     {
         global $Language, $Security;
+        global $UserProfile;
         $userlist = "";
         $user = "";
         $filter = $this->getFilterFromRecordKeys();
@@ -1490,11 +1500,11 @@ class UsersList extends Users
                     }
                     $userlist .= $user;
                     if ($userAction == "resendregisteremail") {
-                        $processed = false;
+                        $processed = $this->sendRegisterEmail($row);
                     } elseif ($userAction == "resetconcurrentuser") {
                         $processed = false;
                     } elseif ($userAction == "resetloginretry") {
-                        $processed = false;
+                        $processed = $UserProfile->resetLoginRetry($user);
                     } elseif ($userAction == "setpasswordexpired") {
                         $processed = false;
                     } else {
@@ -1507,11 +1517,23 @@ class UsersList extends Users
                 }
                 if ($processed) {
                     $conn->commit(); // Commit the changes
+                    if ($userAction == "resendregisteremail") {
+                        $this->setSuccessMessage(str_replace('%u', $userlist, $Language->phrase("ResendRegisterEmailSuccess")));
+                    }
+                    if ($userAction == "resetloginretry") {
+                        $this->setSuccessMessage(str_replace('%u', $userlist, $Language->phrase("ResetLoginRetrySuccess")));
+                    }
                     if ($this->getSuccessMessage() == "" && !ob_get_length()) { // No output
                         $this->setSuccessMessage(str_replace('%s', $actionCaption, $Language->phrase("CustomActionCompleted"))); // Set up success message
                     }
                 } else {
                     $conn->rollback(); // Rollback changes
+                    if ($userAction == "resendregisteremail") {
+                        $this->setFailureMessage(str_replace('%u', $user, $Language->phrase("ResendRegisterEmailFailure")));
+                    }
+                    if ($userAction == "resetloginretry") {
+                        $this->setFailureMessage(str_replace('%u', $user, $Language->phrase("ResetLoginRetryFailure")));
+                    }
 
                     // Set up error message
                     if ($this->getSuccessMessage() != "" || $this->getFailureMessage() != "") {
@@ -1728,7 +1750,7 @@ class UsersList extends Users
             $this->email_verified_at->ViewCustomAttributes = "";
 
             // password
-            $this->_password->ViewValue = $this->_password->CurrentValue;
+            $this->_password->ViewValue = $Language->phrase("PasswordMask");
             $this->_password->ViewCustomAttributes = "";
 
             // remember_token
@@ -1770,11 +1792,6 @@ class UsersList extends Users
             }
             $this->level->ViewCustomAttributes = "";
 
-            // id
-            $this->id->LinkCustomAttributes = "";
-            $this->id->HrefValue = "";
-            $this->id->TooltipValue = "";
-
             // name
             $this->name->LinkCustomAttributes = "";
             $this->name->HrefValue = "";
@@ -1785,30 +1802,10 @@ class UsersList extends Users
             $this->_email->HrefValue = "";
             $this->_email->TooltipValue = "";
 
-            // email_verified_at
-            $this->email_verified_at->LinkCustomAttributes = "";
-            $this->email_verified_at->HrefValue = "";
-            $this->email_verified_at->TooltipValue = "";
-
             // password
             $this->_password->LinkCustomAttributes = "";
             $this->_password->HrefValue = "";
             $this->_password->TooltipValue = "";
-
-            // remember_token
-            $this->remember_token->LinkCustomAttributes = "";
-            $this->remember_token->HrefValue = "";
-            $this->remember_token->TooltipValue = "";
-
-            // created_at
-            $this->created_at->LinkCustomAttributes = "";
-            $this->created_at->HrefValue = "";
-            $this->created_at->TooltipValue = "";
-
-            // updated_at
-            $this->updated_at->LinkCustomAttributes = "";
-            $this->updated_at->HrefValue = "";
-            $this->updated_at->TooltipValue = "";
 
             // level
             $this->level->LinkCustomAttributes = "";

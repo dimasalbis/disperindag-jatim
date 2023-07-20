@@ -365,6 +365,12 @@ class Login extends Users
                 $_SESSION[SESSION_USER_LOGIN_TYPE] = $this->LoginType->CurrentValue; // Save user login type
                 $_SESSION[SESSION_USER_PROFILE_USER_NAME] = $this->Username->CurrentValue; // Save login user name
                 $_SESSION[SESSION_USER_PROFILE_LOGIN_TYPE] = $this->LoginType->CurrentValue; // Save login type
+
+                // Max login attempt checking
+                if ($UserProfile->exceedLoginRetry($this->Username->CurrentValue)) {
+                    $validate = false;
+                    $this->setFailureMessage(str_replace("%t", Config("USER_PROFILE_RETRY_LOCKOUT"), $Language->phrase("ExceedMaxRetry")));
+                }
             }
             $validPwd = false;
             if ($validate) {

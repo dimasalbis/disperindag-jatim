@@ -84,6 +84,12 @@ $Page->showMessage();
         <div class="input-group"><input type="password" name="<?= $Page->Password->FieldVar ?>" id="<?= $Page->Password->FieldVar ?>" autocomplete="current-password" placeholder="<?= HtmlEncode($Language->phrase("Password")) ?>"<?= $Page->Password->editAttributes() ?>><div class="input-group-append"><button type="button" class="btn btn-default ew-toggle-password rounded-right" onclick="ew.togglePassword(event);"><i class="fas fa-eye"></i></button></div></div>
         <div class="invalid-feedback"><?= $Page->Password->getErrorMessage() ?></div>
     </div>
+    <div class="form-group row">
+        <div class="custom-control custom-checkbox">
+            <input type="checkbox" name="<?= $Page->LoginType->FieldVar ?>" id="<?= $Page->LoginType->FieldVar ?>" class="custom-control-input" value="a"<?php if ($Page->LoginType->CurrentValue == "a") { ?> checked<?php } ?>>
+            <label class="custom-control-label" for="<?= $Page->LoginType->FieldVar ?>"><?= $Language->phrase("RememberMe") ?></label>
+        </div>
+    </div>
 <?php if (!$Page->IsModal) { ?>
     <button class="btn btn-primary ew-btn" name="btn-submit" id="btn-submit" type="submit"><?= $Language->phrase("Login") ?></button>
 <?php } ?>
@@ -114,6 +120,8 @@ if ($cntProviders > 0) {
 }
 ?>
 <div class="social-auth-links text-center mt-3">
+    <a class="card-link mr-2" href="#" onclick="<?= $LoginStatus["resetPasswordUrl"] ?>"><?= $Language->phrase("ResetPassword") ?></a>
+    <a class="card-link mr-2" href="#" onclick="<?= $LoginStatus["registerUrl"] ?>"><?= $Language->phrase("Register") ?></a>
 </div>
 </div>
 </div>

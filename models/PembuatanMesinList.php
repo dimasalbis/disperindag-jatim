@@ -558,6 +558,13 @@ class PembuatanMesinList extends PembuatanMesin
     public function run()
     {
         global $ExportType, $CustomExportType, $ExportFileName, $UserProfile, $Language, $Security, $CurrentForm;
+
+        // Update last accessed time
+        if (!$UserProfile->isValidUser(CurrentUserName(), session_id())) {
+            Write($Language->phrase("UserProfileCorrupted"));
+            $this->terminate();
+            return;
+        }
         $this->CurrentAction = Param("action"); // Set up current action
 
         // Get grid add count
@@ -568,7 +575,7 @@ class PembuatanMesinList extends PembuatanMesin
 
         // Set up list options
         $this->setupListOptions();
-        $this->id->Visible = false;
+        $this->id->setVisibility();
         $this->nama_mesin->setVisibility();
         $this->spesifikasi->setVisibility();
         $this->jumlah->setVisibility();
@@ -578,8 +585,10 @@ class PembuatanMesinList extends PembuatanMesin
         $this->nomor_kontrak->Visible = false;
         $this->tanggal_kontrak->setVisibility();
         $this->nilai_kontrak->Visible = false;
+        $this->foto_kontrak->Visible = false;
         $this->upload_ktp->Visible = false;
         $this->foto_mesin->setVisibility();
+        $this->status->setVisibility();
         $this->created_at->Visible = false;
         $this->updated_at->Visible = false;
         $this->hideFieldsForAddEdit();
@@ -872,6 +881,11 @@ class PembuatanMesinList extends PembuatanMesin
         // Initialize
         $filterList = "";
         $savedFilterList = "";
+
+        // Load server side filters
+        if (Config("SEARCH_FILTER_OPTION") == "Server" && isset($UserProfile)) {
+            $savedFilterList = $UserProfile->getSearchFilters(CurrentUserName(), "fpembuatan_mesinlistsrch");
+        }
         $filterList = Concat($filterList, $this->id->AdvancedSearch->toJson(), ","); // Field id
         $filterList = Concat($filterList, $this->nama_mesin->AdvancedSearch->toJson(), ","); // Field nama_mesin
         $filterList = Concat($filterList, $this->spesifikasi->AdvancedSearch->toJson(), ","); // Field spesifikasi
@@ -882,8 +896,10 @@ class PembuatanMesinList extends PembuatanMesin
         $filterList = Concat($filterList, $this->nomor_kontrak->AdvancedSearch->toJson(), ","); // Field nomor_kontrak
         $filterList = Concat($filterList, $this->tanggal_kontrak->AdvancedSearch->toJson(), ","); // Field tanggal_kontrak
         $filterList = Concat($filterList, $this->nilai_kontrak->AdvancedSearch->toJson(), ","); // Field nilai_kontrak
+        $filterList = Concat($filterList, $this->foto_kontrak->AdvancedSearch->toJson(), ","); // Field foto_kontrak
         $filterList = Concat($filterList, $this->upload_ktp->AdvancedSearch->toJson(), ","); // Field upload_ktp
         $filterList = Concat($filterList, $this->foto_mesin->AdvancedSearch->toJson(), ","); // Field foto_mesin
+        $filterList = Concat($filterList, $this->status->AdvancedSearch->toJson(), ","); // Field status
         $filterList = Concat($filterList, $this->created_at->AdvancedSearch->toJson(), ","); // Field created_at
         $filterList = Concat($filterList, $this->updated_at->AdvancedSearch->toJson(), ","); // Field updated_at
         if ($this->BasicSearch->Keyword != "") {
@@ -1006,6 +1022,14 @@ class PembuatanMesinList extends PembuatanMesin
         $this->nilai_kontrak->AdvancedSearch->SearchOperator2 = @$filter["w_nilai_kontrak"];
         $this->nilai_kontrak->AdvancedSearch->save();
 
+        // Field foto_kontrak
+        $this->foto_kontrak->AdvancedSearch->SearchValue = @$filter["x_foto_kontrak"];
+        $this->foto_kontrak->AdvancedSearch->SearchOperator = @$filter["z_foto_kontrak"];
+        $this->foto_kontrak->AdvancedSearch->SearchCondition = @$filter["v_foto_kontrak"];
+        $this->foto_kontrak->AdvancedSearch->SearchValue2 = @$filter["y_foto_kontrak"];
+        $this->foto_kontrak->AdvancedSearch->SearchOperator2 = @$filter["w_foto_kontrak"];
+        $this->foto_kontrak->AdvancedSearch->save();
+
         // Field upload_ktp
         $this->upload_ktp->AdvancedSearch->SearchValue = @$filter["x_upload_ktp"];
         $this->upload_ktp->AdvancedSearch->SearchOperator = @$filter["z_upload_ktp"];
@@ -1021,6 +1045,14 @@ class PembuatanMesinList extends PembuatanMesin
         $this->foto_mesin->AdvancedSearch->SearchValue2 = @$filter["y_foto_mesin"];
         $this->foto_mesin->AdvancedSearch->SearchOperator2 = @$filter["w_foto_mesin"];
         $this->foto_mesin->AdvancedSearch->save();
+
+        // Field status
+        $this->status->AdvancedSearch->SearchValue = @$filter["x_status"];
+        $this->status->AdvancedSearch->SearchOperator = @$filter["z_status"];
+        $this->status->AdvancedSearch->SearchCondition = @$filter["v_status"];
+        $this->status->AdvancedSearch->SearchValue2 = @$filter["y_status"];
+        $this->status->AdvancedSearch->SearchOperator2 = @$filter["w_status"];
+        $this->status->AdvancedSearch->save();
 
         // Field created_at
         $this->created_at->AdvancedSearch->SearchValue = @$filter["x_created_at"];
@@ -1053,6 +1085,7 @@ class PembuatanMesinList extends PembuatanMesin
         $this->buildBasicSearchSql($where, $this->alamat, $arKeywords, $type);
         $this->buildBasicSearchSql($where, $this->nomor_kontrak, $arKeywords, $type);
         $this->buildBasicSearchSql($where, $this->nilai_kontrak, $arKeywords, $type);
+        $this->buildBasicSearchSql($where, $this->foto_kontrak, $arKeywords, $type);
         $this->buildBasicSearchSql($where, $this->upload_ktp, $arKeywords, $type);
         $this->buildBasicSearchSql($where, $this->foto_mesin, $arKeywords, $type);
         return $where;
@@ -1217,6 +1250,7 @@ class PembuatanMesinList extends PembuatanMesin
         if (Get("order") !== null) {
             $this->CurrentOrder = Get("order");
             $this->CurrentOrderType = Get("ordertype", "");
+            $this->updateSort($this->id); // id
             $this->updateSort($this->nama_mesin); // nama_mesin
             $this->updateSort($this->spesifikasi); // spesifikasi
             $this->updateSort($this->jumlah); // jumlah
@@ -1225,6 +1259,7 @@ class PembuatanMesinList extends PembuatanMesin
             $this->updateSort($this->alamat); // alamat
             $this->updateSort($this->tanggal_kontrak); // tanggal_kontrak
             $this->updateSort($this->foto_mesin); // foto_mesin
+            $this->updateSort($this->status); // status
             $this->setStartRecordNumber(1); // Reset start position
         }
     }
@@ -1274,8 +1309,10 @@ class PembuatanMesinList extends PembuatanMesin
                 $this->nomor_kontrak->setSort("");
                 $this->tanggal_kontrak->setSort("");
                 $this->nilai_kontrak->setSort("");
+                $this->foto_kontrak->setSort("");
                 $this->upload_ktp->setSort("");
                 $this->foto_mesin->setSort("");
+                $this->status->setSort("");
                 $this->created_at->setSort("");
                 $this->updated_at->setSort("");
             }
@@ -1333,9 +1370,9 @@ class PembuatanMesinList extends PembuatanMesin
         $item->ShowInButtonGroup = false;
 
         // Drop down button for ListOptions
-        $this->ListOptions->UseDropDownButton = true;
+        $this->ListOptions->UseDropDownButton = false;
         $this->ListOptions->DropDownButtonPhrase = $Language->phrase("ButtonListOptions");
-        $this->ListOptions->UseButtonGroup = false;
+        $this->ListOptions->UseButtonGroup = true;
         if ($this->ListOptions->UseButtonGroup && IsMobile()) {
             $this->ListOptions->UseDropDownButton = true;
         }
@@ -1685,10 +1722,13 @@ class PembuatanMesinList extends PembuatanMesin
         $this->nomor_kontrak->setDbValue($row['nomor_kontrak']);
         $this->tanggal_kontrak->setDbValue($row['tanggal_kontrak']);
         $this->nilai_kontrak->setDbValue($row['nilai_kontrak']);
+        $this->foto_kontrak->Upload->DbValue = $row['foto_kontrak'];
+        $this->foto_kontrak->setDbValue($this->foto_kontrak->Upload->DbValue);
         $this->upload_ktp->Upload->DbValue = $row['upload_ktp'];
         $this->upload_ktp->setDbValue($this->upload_ktp->Upload->DbValue);
         $this->foto_mesin->Upload->DbValue = $row['foto_mesin'];
         $this->foto_mesin->setDbValue($this->foto_mesin->Upload->DbValue);
+        $this->status->setDbValue($row['status']);
         $this->created_at->setDbValue($row['created_at']);
         $this->updated_at->setDbValue($row['updated_at']);
     }
@@ -1707,8 +1747,10 @@ class PembuatanMesinList extends PembuatanMesin
         $row['nomor_kontrak'] = null;
         $row['tanggal_kontrak'] = null;
         $row['nilai_kontrak'] = null;
+        $row['foto_kontrak'] = null;
         $row['upload_ktp'] = null;
         $row['foto_mesin'] = null;
+        $row['status'] = null;
         $row['created_at'] = null;
         $row['updated_at'] = null;
         return $row;
@@ -1768,9 +1810,13 @@ class PembuatanMesinList extends PembuatanMesin
 
         // nilai_kontrak
 
+        // foto_kontrak
+
         // upload_ktp
 
         // foto_mesin
+
+        // status
 
         // created_at
 
@@ -1817,6 +1863,17 @@ class PembuatanMesinList extends PembuatanMesin
             $this->nilai_kontrak->ViewValue = $this->nilai_kontrak->CurrentValue;
             $this->nilai_kontrak->ViewCustomAttributes = "";
 
+            // foto_kontrak
+            if (!EmptyValue($this->foto_kontrak->Upload->DbValue)) {
+                $this->foto_kontrak->ImageWidth = 200;
+                $this->foto_kontrak->ImageHeight = 0;
+                $this->foto_kontrak->ImageAlt = $this->foto_kontrak->alt();
+                $this->foto_kontrak->ViewValue = $this->foto_kontrak->Upload->DbValue;
+            } else {
+                $this->foto_kontrak->ViewValue = "";
+            }
+            $this->foto_kontrak->ViewCustomAttributes = "";
+
             // upload_ktp
             if (!EmptyValue($this->upload_ktp->Upload->DbValue)) {
                 $this->upload_ktp->ImageWidth = 200;
@@ -1839,6 +1896,14 @@ class PembuatanMesinList extends PembuatanMesin
             }
             $this->foto_mesin->ViewCustomAttributes = "";
 
+            // status
+            if (strval($this->status->CurrentValue) != "") {
+                $this->status->ViewValue = $this->status->optionCaption($this->status->CurrentValue);
+            } else {
+                $this->status->ViewValue = null;
+            }
+            $this->status->ViewCustomAttributes = "";
+
             // created_at
             $this->created_at->ViewValue = $this->created_at->CurrentValue;
             $this->created_at->ViewValue = FormatDateTime($this->created_at->ViewValue, 0);
@@ -1848,6 +1913,11 @@ class PembuatanMesinList extends PembuatanMesin
             $this->updated_at->ViewValue = $this->updated_at->CurrentValue;
             $this->updated_at->ViewValue = FormatDateTime($this->updated_at->ViewValue, 0);
             $this->updated_at->ViewCustomAttributes = "";
+
+            // id
+            $this->id->LinkCustomAttributes = "";
+            $this->id->HrefValue = "";
+            $this->id->TooltipValue = "";
 
             // nama_mesin
             $this->nama_mesin->LinkCustomAttributes = "";
@@ -1904,6 +1974,11 @@ class PembuatanMesinList extends PembuatanMesin
                 $this->foto_mesin->LinkAttrs["data-rel"] = "pembuatan_mesin_x" . $this->RowCount . "_foto_mesin";
                 $this->foto_mesin->LinkAttrs->appendClass("ew-lightbox");
             }
+
+            // status
+            $this->status->LinkCustomAttributes = "";
+            $this->status->HrefValue = "";
+            $this->status->TooltipValue = "";
         }
 
         // Call Row Rendered event
@@ -1974,6 +2049,8 @@ class PembuatanMesinList extends PembuatanMesin
 
             // Set up lookup SQL and connection
             switch ($fld->FieldVar) {
+                case "x_status":
+                    break;
                 default:
                     $lookupFilter = "";
                     break;

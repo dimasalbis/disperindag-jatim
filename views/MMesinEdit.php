@@ -113,12 +113,12 @@ $Page->showMessage();
 <input type="hidden" name="action" id="action" value="update">
 <input type="hidden" name="modal" value="<?= (int)$Page->IsModal ?>">
 <input type="hidden" name="<?= $Page->OldKeyName ?>" value="<?= $Page->OldKey ?>">
-<div class="ew-edit-div"><!-- page* -->
+<div class="ew-edit-div d-none"><!-- page* -->
 <?php if ($Page->gambar_mesin->Visible) { // gambar_mesin ?>
     <div id="r_gambar_mesin" class="form-group row">
-        <label id="elh_m_mesin_gambar_mesin" class="<?= $Page->LeftColumnClass ?>"><?= $Page->gambar_mesin->caption() ?><?= $Page->gambar_mesin->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></label>
+        <label id="elh_m_mesin_gambar_mesin" class="<?= $Page->LeftColumnClass ?>"><template id="tpc_m_mesin_gambar_mesin"><?= $Page->gambar_mesin->caption() ?><?= $Page->gambar_mesin->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></template></label>
         <div class="<?= $Page->RightColumnClass ?>"><div <?= $Page->gambar_mesin->cellAttributes() ?>>
-<span id="el_m_mesin_gambar_mesin">
+<template id="tpx_m_mesin_gambar_mesin"><span id="el_m_mesin_gambar_mesin">
 <div id="fd_x_gambar_mesin">
 <div class="input-group">
     <div class="custom-file">
@@ -135,72 +135,77 @@ $Page->showMessage();
 <input type="hidden" name="fm_x_gambar_mesin" id= "fm_x_gambar_mesin" value="<?= $Page->gambar_mesin->UploadMaxFileSize ?>">
 </div>
 <table id="ft_x_gambar_mesin" class="table table-sm float-left ew-upload-table"><tbody class="files"></tbody></table>
-</span>
+</span></template>
 </div></div>
     </div>
 <?php } ?>
 <?php if ($Page->nama_mesin->Visible) { // nama_mesin ?>
     <div id="r_nama_mesin" class="form-group row">
-        <label id="elh_m_mesin_nama_mesin" for="x_nama_mesin" class="<?= $Page->LeftColumnClass ?>"><?= $Page->nama_mesin->caption() ?><?= $Page->nama_mesin->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></label>
+        <label id="elh_m_mesin_nama_mesin" for="x_nama_mesin" class="<?= $Page->LeftColumnClass ?>"><template id="tpc_m_mesin_nama_mesin"><?= $Page->nama_mesin->caption() ?><?= $Page->nama_mesin->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></template></label>
         <div class="<?= $Page->RightColumnClass ?>"><div <?= $Page->nama_mesin->cellAttributes() ?>>
-<span id="el_m_mesin_nama_mesin">
+<template id="tpx_m_mesin_nama_mesin"><span id="el_m_mesin_nama_mesin">
 <input type="<?= $Page->nama_mesin->getInputTextType() ?>" data-table="m_mesin" data-field="x_nama_mesin" name="x_nama_mesin" id="x_nama_mesin" size="30" maxlength="255" placeholder="<?= HtmlEncode($Page->nama_mesin->getPlaceHolder()) ?>" value="<?= $Page->nama_mesin->EditValue ?>"<?= $Page->nama_mesin->editAttributes() ?> aria-describedby="x_nama_mesin_help">
 <?= $Page->nama_mesin->getCustomMessage() ?>
 <div class="invalid-feedback"><?= $Page->nama_mesin->getErrorMessage() ?></div>
-</span>
+</span></template>
 </div></div>
     </div>
 <?php } ?>
 <?php if ($Page->jumlah->Visible) { // jumlah ?>
     <div id="r_jumlah" class="form-group row">
-        <label id="elh_m_mesin_jumlah" for="x_jumlah" class="<?= $Page->LeftColumnClass ?>"><?= $Page->jumlah->caption() ?><?= $Page->jumlah->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></label>
+        <label id="elh_m_mesin_jumlah" for="x_jumlah" class="<?= $Page->LeftColumnClass ?>"><template id="tpc_m_mesin_jumlah"><?= $Page->jumlah->caption() ?><?= $Page->jumlah->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></template></label>
         <div class="<?= $Page->RightColumnClass ?>"><div <?= $Page->jumlah->cellAttributes() ?>>
-<span id="el_m_mesin_jumlah">
+<template id="tpx_m_mesin_jumlah"><span id="el_m_mesin_jumlah">
 <input type="<?= $Page->jumlah->getInputTextType() ?>" data-table="m_mesin" data-field="x_jumlah" name="x_jumlah" id="x_jumlah" size="30" maxlength="255" placeholder="<?= HtmlEncode($Page->jumlah->getPlaceHolder()) ?>" value="<?= $Page->jumlah->EditValue ?>"<?= $Page->jumlah->editAttributes() ?> aria-describedby="x_jumlah_help">
 <?= $Page->jumlah->getCustomMessage() ?>
 <div class="invalid-feedback"><?= $Page->jumlah->getErrorMessage() ?></div>
-</span>
+</span></template>
 </div></div>
     </div>
 <?php } ?>
 <?php if ($Page->dalam_penyewaan->Visible) { // dalam_penyewaan ?>
     <div id="r_dalam_penyewaan" class="form-group row">
-        <label id="elh_m_mesin_dalam_penyewaan" for="x_dalam_penyewaan" class="<?= $Page->LeftColumnClass ?>"><?= $Page->dalam_penyewaan->caption() ?><?= $Page->dalam_penyewaan->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></label>
+        <label id="elh_m_mesin_dalam_penyewaan" for="x_dalam_penyewaan" class="<?= $Page->LeftColumnClass ?>"><template id="tpc_m_mesin_dalam_penyewaan"><?= $Page->dalam_penyewaan->caption() ?><?= $Page->dalam_penyewaan->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></template></label>
         <div class="<?= $Page->RightColumnClass ?>"><div <?= $Page->dalam_penyewaan->cellAttributes() ?>>
-<span id="el_m_mesin_dalam_penyewaan">
+<template id="tpx_m_mesin_dalam_penyewaan"><span id="el_m_mesin_dalam_penyewaan">
 <input type="<?= $Page->dalam_penyewaan->getInputTextType() ?>" data-table="m_mesin" data-field="x_dalam_penyewaan" name="x_dalam_penyewaan" id="x_dalam_penyewaan" size="30" maxlength="255" placeholder="<?= HtmlEncode($Page->dalam_penyewaan->getPlaceHolder()) ?>" value="<?= $Page->dalam_penyewaan->EditValue ?>"<?= $Page->dalam_penyewaan->editAttributes() ?> aria-describedby="x_dalam_penyewaan_help">
 <?= $Page->dalam_penyewaan->getCustomMessage() ?>
 <div class="invalid-feedback"><?= $Page->dalam_penyewaan->getErrorMessage() ?></div>
-</span>
+</span></template>
 </div></div>
     </div>
 <?php } ?>
 <?php if ($Page->sisa_barang->Visible) { // sisa_barang ?>
     <div id="r_sisa_barang" class="form-group row">
-        <label id="elh_m_mesin_sisa_barang" for="x_sisa_barang" class="<?= $Page->LeftColumnClass ?>"><?= $Page->sisa_barang->caption() ?><?= $Page->sisa_barang->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></label>
+        <label id="elh_m_mesin_sisa_barang" for="x_sisa_barang" class="<?= $Page->LeftColumnClass ?>"><template id="tpc_m_mesin_sisa_barang"><?= $Page->sisa_barang->caption() ?><?= $Page->sisa_barang->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></template></label>
         <div class="<?= $Page->RightColumnClass ?>"><div <?= $Page->sisa_barang->cellAttributes() ?>>
-<span id="el_m_mesin_sisa_barang">
+<template id="tpx_m_mesin_sisa_barang"><span id="el_m_mesin_sisa_barang">
 <input type="<?= $Page->sisa_barang->getInputTextType() ?>" data-table="m_mesin" data-field="x_sisa_barang" name="x_sisa_barang" id="x_sisa_barang" size="30" maxlength="255" placeholder="<?= HtmlEncode($Page->sisa_barang->getPlaceHolder()) ?>" value="<?= $Page->sisa_barang->EditValue ?>"<?= $Page->sisa_barang->editAttributes() ?> aria-describedby="x_sisa_barang_help">
 <?= $Page->sisa_barang->getCustomMessage() ?>
 <div class="invalid-feedback"><?= $Page->sisa_barang->getErrorMessage() ?></div>
-</span>
+</span></template>
 </div></div>
     </div>
 <?php } ?>
 <?php if ($Page->keterangan->Visible) { // keterangan ?>
     <div id="r_keterangan" class="form-group row">
-        <label id="elh_m_mesin_keterangan" for="x_keterangan" class="<?= $Page->LeftColumnClass ?>"><?= $Page->keterangan->caption() ?><?= $Page->keterangan->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></label>
+        <label id="elh_m_mesin_keterangan" for="x_keterangan" class="<?= $Page->LeftColumnClass ?>"><template id="tpc_m_mesin_keterangan"><?= $Page->keterangan->caption() ?><?= $Page->keterangan->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></template></label>
         <div class="<?= $Page->RightColumnClass ?>"><div <?= $Page->keterangan->cellAttributes() ?>>
-<span id="el_m_mesin_keterangan">
+<template id="tpx_m_mesin_keterangan"><span id="el_m_mesin_keterangan">
 <textarea data-table="m_mesin" data-field="x_keterangan" name="x_keterangan" id="x_keterangan" cols="35" rows="4" placeholder="<?= HtmlEncode($Page->keterangan->getPlaceHolder()) ?>"<?= $Page->keterangan->editAttributes() ?> aria-describedby="x_keterangan_help"><?= $Page->keterangan->EditValue ?></textarea>
 <?= $Page->keterangan->getCustomMessage() ?>
 <div class="invalid-feedback"><?= $Page->keterangan->getErrorMessage() ?></div>
-</span>
+</span></template>
 </div></div>
     </div>
 <?php } ?>
 </div><!-- /page* -->
     <input type="hidden" data-table="m_mesin" data-field="x_id" data-hidden="1" name="x_id" id="x_id" value="<?= HtmlEncode($Page->id->CurrentValue) ?>">
+<div id="tpd_m_mesinedit" class="ew-custom-template"></div>
+<template id="tpm_m_mesinedit">
+<div id="ct_MMesinEdit"><?php require_once('m-mesin.php'); ?>
+</div>
+</template>
 <?php if (!$Page->IsModal) { ?>
 <div class="form-group row"><!-- buttons .form-group -->
     <div class="<?= $Page->OffsetColumnClass ?>"><!-- buttons offset -->
@@ -214,6 +219,13 @@ $Page->showMessage();
 <div class="clearfix"></div>
 <?php } ?>
 </form>
+<script class="ew-apply-template">
+loadjs.ready(["jsrender", "makerjs"], function() {
+    ew.templateData = { rows: <?= JsonEncode($Page->Rows) ?> };
+    ew.applyTemplate("tpd_m_mesinedit", "tpm_m_mesinedit", "m_mesinedit", "<?= $Page->CustomExport ?>", ew.templateData.rows[0]);
+    loadjs.done("customtemplate");
+});
+</script>
 <?php
 $Page->showPageFooter();
 echo GetDebugMessage();

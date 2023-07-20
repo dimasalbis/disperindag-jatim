@@ -555,6 +555,13 @@ class UserlevelsList extends Userlevels
     public function run()
     {
         global $ExportType, $CustomExportType, $ExportFileName, $UserProfile, $Language, $Security, $CurrentForm;
+
+        // Update last accessed time
+        if (!$UserProfile->isValidUser(CurrentUserName(), session_id())) {
+            Write($Language->phrase("UserProfileCorrupted"));
+            $this->terminate();
+            return;
+        }
         $this->CurrentAction = Param("action"); // Set up current action
 
         // Get grid add count
@@ -857,6 +864,11 @@ class UserlevelsList extends Userlevels
         // Initialize
         $filterList = "";
         $savedFilterList = "";
+
+        // Load server side filters
+        if (Config("SEARCH_FILTER_OPTION") == "Server" && isset($UserProfile)) {
+            $savedFilterList = $UserProfile->getSearchFilters(CurrentUserName(), "fuserlevelslistsrch");
+        }
         $filterList = Concat($filterList, $this->userlevelid->AdvancedSearch->toJson(), ","); // Field userlevelid
         $filterList = Concat($filterList, $this->userlevelname->AdvancedSearch->toJson(), ","); // Field userlevelname
         if ($this->BasicSearch->Keyword != "") {
@@ -1190,9 +1202,9 @@ class UserlevelsList extends Userlevels
         $item->ShowInButtonGroup = false;
 
         // Drop down button for ListOptions
-        $this->ListOptions->UseDropDownButton = true;
+        $this->ListOptions->UseDropDownButton = false;
         $this->ListOptions->DropDownButtonPhrase = $Language->phrase("ButtonListOptions");
-        $this->ListOptions->UseButtonGroup = false;
+        $this->ListOptions->UseButtonGroup = true;
         if ($this->ListOptions->UseButtonGroup && IsMobile()) {
             $this->ListOptions->UseDropDownButton = true;
         }

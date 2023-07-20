@@ -21,6 +21,7 @@ return function (App $app) {
     $app->any('/' . Config("API_SESSION_ACTION") . '[/{params:.*}]', ApiController::class)->add(ApiPermissionMiddleware::class)->setName('api/' . Config("API_SESSION_ACTION")); // session
     $app->any('/' . Config("API_PROGRESS_ACTION") . '[/{params:.*}]', ApiController::class)->add(ApiPermissionMiddleware::class)->setName('api/' . Config("API_PROGRESS_ACTION")); // session
     $app->any('/' . Config("API_EXPORT_CHART_ACTION") . '[/{params:.*}]', ApiController::class)->add(ApiPermissionMiddleware::class)->setName('api/' . Config("API_EXPORT_CHART_ACTION")); // chart
+    $app->any('/' . Config("API_REGISTER_ACTION"), ApiController::class)->add(ApiPermissionMiddleware::class)->setName('api/' . Config("API_REGISTER_ACTION")); // register
     $app->any('/' . Config("API_PERMISSIONS_ACTION") . '[/{params:.*}]', ApiController::class)->add(ApiPermissionMiddleware::class)->add(new JwtMiddleware())->setName('api/' . Config("API_PERMISSIONS_ACTION")); // permissions
 
     // User API actions

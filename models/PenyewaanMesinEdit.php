@@ -464,6 +464,13 @@ class PenyewaanMesinEdit extends PenyewaanMesin
         // Is modal
         $this->IsModal = Param("modal") == "1";
 
+        // Update last accessed time
+        if (!$UserProfile->isValidUser(CurrentUserName(), session_id())) {
+            Write($Language->phrase("UserProfileCorrupted"));
+            $this->terminate();
+            return;
+        }
+
         // Create form object
         $CurrentForm = new HttpForm();
         $this->CurrentAction = Param("action"); // Set up current action

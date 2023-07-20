@@ -113,80 +113,85 @@ $Page->showMessage();
 <input type="hidden" name="action" id="action" value="insert">
 <input type="hidden" name="modal" value="<?= (int)$Page->IsModal ?>">
 <input type="hidden" name="<?= $Page->OldKeyName ?>" value="<?= $Page->OldKey ?>">
-<div class="ew-add-div"><!-- page* -->
+<div class="ew-add-div d-none"><!-- page* -->
 <?php if ($Page->nama_perusahaan->Visible) { // nama_perusahaan ?>
     <div id="r_nama_perusahaan" class="form-group row">
-        <label id="elh_perusahaan_penampung_nama_perusahaan" for="x_nama_perusahaan" class="<?= $Page->LeftColumnClass ?>"><?= $Page->nama_perusahaan->caption() ?><?= $Page->nama_perusahaan->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></label>
+        <label id="elh_perusahaan_penampung_nama_perusahaan" for="x_nama_perusahaan" class="<?= $Page->LeftColumnClass ?>"><template id="tpc_perusahaan_penampung_nama_perusahaan"><?= $Page->nama_perusahaan->caption() ?><?= $Page->nama_perusahaan->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></template></label>
         <div class="<?= $Page->RightColumnClass ?>"><div <?= $Page->nama_perusahaan->cellAttributes() ?>>
-<span id="el_perusahaan_penampung_nama_perusahaan">
+<template id="tpx_perusahaan_penampung_nama_perusahaan"><span id="el_perusahaan_penampung_nama_perusahaan">
 <input type="<?= $Page->nama_perusahaan->getInputTextType() ?>" data-table="perusahaan_penampung" data-field="x_nama_perusahaan" name="x_nama_perusahaan" id="x_nama_perusahaan" size="30" maxlength="255" placeholder="<?= HtmlEncode($Page->nama_perusahaan->getPlaceHolder()) ?>" value="<?= $Page->nama_perusahaan->EditValue ?>"<?= $Page->nama_perusahaan->editAttributes() ?> aria-describedby="x_nama_perusahaan_help">
 <?= $Page->nama_perusahaan->getCustomMessage() ?>
 <div class="invalid-feedback"><?= $Page->nama_perusahaan->getErrorMessage() ?></div>
-</span>
+</span></template>
 </div></div>
     </div>
 <?php } ?>
 <?php if ($Page->alamat->Visible) { // alamat ?>
     <div id="r_alamat" class="form-group row">
-        <label id="elh_perusahaan_penampung_alamat" for="x_alamat" class="<?= $Page->LeftColumnClass ?>"><?= $Page->alamat->caption() ?><?= $Page->alamat->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></label>
+        <label id="elh_perusahaan_penampung_alamat" for="x_alamat" class="<?= $Page->LeftColumnClass ?>"><template id="tpc_perusahaan_penampung_alamat"><?= $Page->alamat->caption() ?><?= $Page->alamat->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></template></label>
         <div class="<?= $Page->RightColumnClass ?>"><div <?= $Page->alamat->cellAttributes() ?>>
-<span id="el_perusahaan_penampung_alamat">
+<template id="tpx_perusahaan_penampung_alamat"><span id="el_perusahaan_penampung_alamat">
 <input type="<?= $Page->alamat->getInputTextType() ?>" data-table="perusahaan_penampung" data-field="x_alamat" name="x_alamat" id="x_alamat" size="30" maxlength="255" placeholder="<?= HtmlEncode($Page->alamat->getPlaceHolder()) ?>" value="<?= $Page->alamat->EditValue ?>"<?= $Page->alamat->editAttributes() ?> aria-describedby="x_alamat_help">
 <?= $Page->alamat->getCustomMessage() ?>
 <div class="invalid-feedback"><?= $Page->alamat->getErrorMessage() ?></div>
-</span>
+</span></template>
 </div></div>
     </div>
 <?php } ?>
 <?php if ($Page->no_telpon->Visible) { // no_telpon ?>
     <div id="r_no_telpon" class="form-group row">
-        <label id="elh_perusahaan_penampung_no_telpon" for="x_no_telpon" class="<?= $Page->LeftColumnClass ?>"><?= $Page->no_telpon->caption() ?><?= $Page->no_telpon->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></label>
+        <label id="elh_perusahaan_penampung_no_telpon" for="x_no_telpon" class="<?= $Page->LeftColumnClass ?>"><template id="tpc_perusahaan_penampung_no_telpon"><?= $Page->no_telpon->caption() ?><?= $Page->no_telpon->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></template></label>
         <div class="<?= $Page->RightColumnClass ?>"><div <?= $Page->no_telpon->cellAttributes() ?>>
-<span id="el_perusahaan_penampung_no_telpon">
+<template id="tpx_perusahaan_penampung_no_telpon"><span id="el_perusahaan_penampung_no_telpon">
 <input type="<?= $Page->no_telpon->getInputTextType() ?>" data-table="perusahaan_penampung" data-field="x_no_telpon" name="x_no_telpon" id="x_no_telpon" size="30" maxlength="255" placeholder="<?= HtmlEncode($Page->no_telpon->getPlaceHolder()) ?>" value="<?= $Page->no_telpon->EditValue ?>"<?= $Page->no_telpon->editAttributes() ?> aria-describedby="x_no_telpon_help">
 <?= $Page->no_telpon->getCustomMessage() ?>
 <div class="invalid-feedback"><?= $Page->no_telpon->getErrorMessage() ?></div>
-</span>
+</span></template>
 </div></div>
     </div>
 <?php } ?>
 <?php if ($Page->contact_person->Visible) { // contact_person ?>
     <div id="r_contact_person" class="form-group row">
-        <label id="elh_perusahaan_penampung_contact_person" for="x_contact_person" class="<?= $Page->LeftColumnClass ?>"><?= $Page->contact_person->caption() ?><?= $Page->contact_person->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></label>
+        <label id="elh_perusahaan_penampung_contact_person" for="x_contact_person" class="<?= $Page->LeftColumnClass ?>"><template id="tpc_perusahaan_penampung_contact_person"><?= $Page->contact_person->caption() ?><?= $Page->contact_person->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></template></label>
         <div class="<?= $Page->RightColumnClass ?>"><div <?= $Page->contact_person->cellAttributes() ?>>
-<span id="el_perusahaan_penampung_contact_person">
+<template id="tpx_perusahaan_penampung_contact_person"><span id="el_perusahaan_penampung_contact_person">
 <input type="<?= $Page->contact_person->getInputTextType() ?>" data-table="perusahaan_penampung" data-field="x_contact_person" name="x_contact_person" id="x_contact_person" size="30" maxlength="255" placeholder="<?= HtmlEncode($Page->contact_person->getPlaceHolder()) ?>" value="<?= $Page->contact_person->EditValue ?>"<?= $Page->contact_person->editAttributes() ?> aria-describedby="x_contact_person_help">
 <?= $Page->contact_person->getCustomMessage() ?>
 <div class="invalid-feedback"><?= $Page->contact_person->getErrorMessage() ?></div>
-</span>
+</span></template>
 </div></div>
     </div>
 <?php } ?>
 <?php if ($Page->bidang->Visible) { // bidang ?>
     <div id="r_bidang" class="form-group row">
-        <label id="elh_perusahaan_penampung_bidang" for="x_bidang" class="<?= $Page->LeftColumnClass ?>"><?= $Page->bidang->caption() ?><?= $Page->bidang->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></label>
+        <label id="elh_perusahaan_penampung_bidang" for="x_bidang" class="<?= $Page->LeftColumnClass ?>"><template id="tpc_perusahaan_penampung_bidang"><?= $Page->bidang->caption() ?><?= $Page->bidang->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></template></label>
         <div class="<?= $Page->RightColumnClass ?>"><div <?= $Page->bidang->cellAttributes() ?>>
-<span id="el_perusahaan_penampung_bidang">
+<template id="tpx_perusahaan_penampung_bidang"><span id="el_perusahaan_penampung_bidang">
 <input type="<?= $Page->bidang->getInputTextType() ?>" data-table="perusahaan_penampung" data-field="x_bidang" name="x_bidang" id="x_bidang" size="30" maxlength="255" placeholder="<?= HtmlEncode($Page->bidang->getPlaceHolder()) ?>" value="<?= $Page->bidang->EditValue ?>"<?= $Page->bidang->editAttributes() ?> aria-describedby="x_bidang_help">
 <?= $Page->bidang->getCustomMessage() ?>
 <div class="invalid-feedback"><?= $Page->bidang->getErrorMessage() ?></div>
-</span>
+</span></template>
 </div></div>
     </div>
 <?php } ?>
 <?php if ($Page->keterangan->Visible) { // keterangan ?>
     <div id="r_keterangan" class="form-group row">
-        <label id="elh_perusahaan_penampung_keterangan" for="x_keterangan" class="<?= $Page->LeftColumnClass ?>"><?= $Page->keterangan->caption() ?><?= $Page->keterangan->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></label>
+        <label id="elh_perusahaan_penampung_keterangan" for="x_keterangan" class="<?= $Page->LeftColumnClass ?>"><template id="tpc_perusahaan_penampung_keterangan"><?= $Page->keterangan->caption() ?><?= $Page->keterangan->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></template></label>
         <div class="<?= $Page->RightColumnClass ?>"><div <?= $Page->keterangan->cellAttributes() ?>>
-<span id="el_perusahaan_penampung_keterangan">
+<template id="tpx_perusahaan_penampung_keterangan"><span id="el_perusahaan_penampung_keterangan">
 <textarea data-table="perusahaan_penampung" data-field="x_keterangan" name="x_keterangan" id="x_keterangan" cols="35" rows="4" placeholder="<?= HtmlEncode($Page->keterangan->getPlaceHolder()) ?>"<?= $Page->keterangan->editAttributes() ?> aria-describedby="x_keterangan_help"><?= $Page->keterangan->EditValue ?></textarea>
 <?= $Page->keterangan->getCustomMessage() ?>
 <div class="invalid-feedback"><?= $Page->keterangan->getErrorMessage() ?></div>
-</span>
+</span></template>
 </div></div>
     </div>
 <?php } ?>
 </div><!-- /page* -->
+<div id="tpd_perusahaan_penampungadd" class="ew-custom-template"></div>
+<template id="tpm_perusahaan_penampungadd">
+<div id="ct_PerusahaanPenampungAdd"><?php require_once('perusahaan-penampung.php'); ?>
+</div>
+</template>
 <?php if (!$Page->IsModal) { ?>
 <div class="form-group row"><!-- buttons .form-group -->
     <div class="<?= $Page->OffsetColumnClass ?>"><!-- buttons offset -->
@@ -196,6 +201,13 @@ $Page->showMessage();
 </div><!-- /buttons .form-group -->
 <?php } ?>
 </form>
+<script class="ew-apply-template">
+loadjs.ready(["jsrender", "makerjs"], function() {
+    ew.templateData = { rows: <?= JsonEncode($Page->Rows) ?> };
+    ew.applyTemplate("tpd_perusahaan_penampungadd", "tpm_perusahaan_penampungadd", "perusahaan_penampungadd", "<?= $Page->CustomExport ?>", ew.templateData.rows[0]);
+    loadjs.done("customtemplate");
+});
+</script>
 <?php
 $Page->showPageFooter();
 echo GetDebugMessage();

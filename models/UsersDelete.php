@@ -373,15 +373,22 @@ class UsersDelete extends Users
     public function run()
     {
         global $ExportType, $CustomExportType, $ExportFileName, $UserProfile, $Language, $Security, $CurrentForm;
+
+        // Update last accessed time
+        if (!$UserProfile->isValidUser(CurrentUserName(), session_id())) {
+            Write($Language->phrase("UserProfileCorrupted"));
+            $this->terminate();
+            return;
+        }
         $this->CurrentAction = Param("action"); // Set up current action
-        $this->id->setVisibility();
+        $this->id->Visible = false;
         $this->name->setVisibility();
         $this->_email->setVisibility();
-        $this->email_verified_at->setVisibility();
+        $this->email_verified_at->Visible = false;
         $this->_password->setVisibility();
-        $this->remember_token->setVisibility();
-        $this->created_at->setVisibility();
-        $this->updated_at->setVisibility();
+        $this->remember_token->Visible = false;
+        $this->created_at->Visible = false;
+        $this->updated_at->Visible = false;
         $this->level->setVisibility();
         $this->hideFieldsForAddEdit();
 
@@ -621,7 +628,7 @@ class UsersDelete extends Users
             $this->email_verified_at->ViewCustomAttributes = "";
 
             // password
-            $this->_password->ViewValue = $this->_password->CurrentValue;
+            $this->_password->ViewValue = $Language->phrase("PasswordMask");
             $this->_password->ViewCustomAttributes = "";
 
             // remember_token
@@ -663,11 +670,6 @@ class UsersDelete extends Users
             }
             $this->level->ViewCustomAttributes = "";
 
-            // id
-            $this->id->LinkCustomAttributes = "";
-            $this->id->HrefValue = "";
-            $this->id->TooltipValue = "";
-
             // name
             $this->name->LinkCustomAttributes = "";
             $this->name->HrefValue = "";
@@ -678,30 +680,10 @@ class UsersDelete extends Users
             $this->_email->HrefValue = "";
             $this->_email->TooltipValue = "";
 
-            // email_verified_at
-            $this->email_verified_at->LinkCustomAttributes = "";
-            $this->email_verified_at->HrefValue = "";
-            $this->email_verified_at->TooltipValue = "";
-
             // password
             $this->_password->LinkCustomAttributes = "";
             $this->_password->HrefValue = "";
             $this->_password->TooltipValue = "";
-
-            // remember_token
-            $this->remember_token->LinkCustomAttributes = "";
-            $this->remember_token->HrefValue = "";
-            $this->remember_token->TooltipValue = "";
-
-            // created_at
-            $this->created_at->LinkCustomAttributes = "";
-            $this->created_at->HrefValue = "";
-            $this->created_at->TooltipValue = "";
-
-            // updated_at
-            $this->updated_at->LinkCustomAttributes = "";
-            $this->updated_at->HrefValue = "";
-            $this->updated_at->TooltipValue = "";
 
             // level
             $this->level->LinkCustomAttributes = "";

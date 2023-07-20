@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         'athari/yalinqo' => array(
-            'pretty_version' => 'v2.4.2',
-            'version' => '2.4.2.0',
-            'reference' => 'cb8afe0c03a9ea639f9a14ea78641abb2b7682fb',
+            'pretty_version' => 'v2.5.0',
+            'version' => '2.5.0.0',
+            'reference' => 'f837af690830fb35904c7b6a5f33052e46b86e57',
             'type' => 'library',
             'install_path' => __DIR__ . '/../athari/yalinqo',
             'aliases' => array(),

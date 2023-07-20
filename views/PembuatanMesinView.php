@@ -155,6 +155,18 @@ $Page->showMessage();
 </td>
     </tr>
 <?php } ?>
+<?php if ($Page->foto_kontrak->Visible) { // foto_kontrak ?>
+    <tr id="r_foto_kontrak">
+        <td class="<?= $Page->TableLeftColumnClass ?>"><span id="elh_pembuatan_mesin_foto_kontrak"><?= $Page->foto_kontrak->caption() ?></span></td>
+        <td data-name="foto_kontrak" <?= $Page->foto_kontrak->cellAttributes() ?>>
+<span id="el_pembuatan_mesin_foto_kontrak">
+<span>
+<?= GetFileViewTag($Page->foto_kontrak, $Page->foto_kontrak->getViewValue(), false) ?>
+</span>
+</span>
+</td>
+    </tr>
+<?php } ?>
 <?php if ($Page->upload_ktp->Visible) { // upload_ktp ?>
     <tr id="r_upload_ktp">
         <td class="<?= $Page->TableLeftColumnClass ?>"><span id="elh_pembuatan_mesin_upload_ktp"><?= $Page->upload_ktp->caption() ?></span></td>
@@ -175,6 +187,17 @@ $Page->showMessage();
 <span>
 <?= GetFileViewTag($Page->foto_mesin, $Page->foto_mesin->getViewValue(), false) ?>
 </span>
+</span>
+</td>
+    </tr>
+<?php } ?>
+<?php if ($Page->status->Visible) { // status ?>
+    <tr id="r_status">
+        <td class="<?= $Page->TableLeftColumnClass ?>"><span id="elh_pembuatan_mesin_status"><?= $Page->status->caption() ?></span></td>
+        <td data-name="status" <?= $Page->status->cellAttributes() ?>>
+<span id="el_pembuatan_mesin_status">
+<span<?= $Page->status->viewAttributes() ?>>
+<?= $Page->status->getViewValue() ?></span>
 </span>
 </td>
     </tr>

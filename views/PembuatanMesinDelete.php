@@ -44,6 +44,9 @@ $Page->showMessage();
 <table class="table ew-table">
     <thead>
     <tr class="ew-table-header">
+<?php if ($Page->id->Visible) { // id ?>
+        <th class="<?= $Page->id->headerCellClass() ?>"><span id="elh_pembuatan_mesin_id" class="pembuatan_mesin_id"><?= $Page->id->caption() ?></span></th>
+<?php } ?>
 <?php if ($Page->nama_mesin->Visible) { // nama_mesin ?>
         <th class="<?= $Page->nama_mesin->headerCellClass() ?>"><span id="elh_pembuatan_mesin_nama_mesin" class="pembuatan_mesin_nama_mesin"><?= $Page->nama_mesin->caption() ?></span></th>
 <?php } ?>
@@ -68,6 +71,9 @@ $Page->showMessage();
 <?php if ($Page->foto_mesin->Visible) { // foto_mesin ?>
         <th class="<?= $Page->foto_mesin->headerCellClass() ?>"><span id="elh_pembuatan_mesin_foto_mesin" class="pembuatan_mesin_foto_mesin"><?= $Page->foto_mesin->caption() ?></span></th>
 <?php } ?>
+<?php if ($Page->status->Visible) { // status ?>
+        <th class="<?= $Page->status->headerCellClass() ?>"><span id="elh_pembuatan_mesin_status" class="pembuatan_mesin_status"><?= $Page->status->caption() ?></span></th>
+<?php } ?>
     </tr>
     </thead>
     <tbody>
@@ -89,6 +95,14 @@ while (!$Page->Recordset->EOF) {
     $Page->renderRow();
 ?>
     <tr <?= $Page->rowAttributes() ?>>
+<?php if ($Page->id->Visible) { // id ?>
+        <td <?= $Page->id->cellAttributes() ?>>
+<span id="el<?= $Page->RowCount ?>_pembuatan_mesin_id" class="pembuatan_mesin_id">
+<span<?= $Page->id->viewAttributes() ?>>
+<?= $Page->id->getViewValue() ?></span>
+</span>
+</td>
+<?php } ?>
 <?php if ($Page->nama_mesin->Visible) { // nama_mesin ?>
         <td <?= $Page->nama_mesin->cellAttributes() ?>>
 <span id="el<?= $Page->RowCount ?>_pembuatan_mesin_nama_mesin" class="pembuatan_mesin_nama_mesin">
@@ -151,6 +165,14 @@ while (!$Page->Recordset->EOF) {
 <span>
 <?= GetFileViewTag($Page->foto_mesin, $Page->foto_mesin->getViewValue(), false) ?>
 </span>
+</span>
+</td>
+<?php } ?>
+<?php if ($Page->status->Visible) { // status ?>
+        <td <?= $Page->status->cellAttributes() ?>>
+<span id="el<?= $Page->RowCount ?>_pembuatan_mesin_status" class="pembuatan_mesin_status">
+<span<?= $Page->status->viewAttributes() ?>>
+<?= $Page->status->getViewValue() ?></span>
 </span>
 </td>
 <?php } ?>

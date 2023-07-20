@@ -38,8 +38,10 @@ class PembuatanMesin extends DbTable
     public $nomor_kontrak;
     public $tanggal_kontrak;
     public $nilai_kontrak;
+    public $foto_kontrak;
     public $upload_ktp;
     public $foto_mesin;
+    public $status;
     public $created_at;
     public $updated_at;
 
@@ -158,6 +160,12 @@ class PembuatanMesin extends DbTable
         $this->nilai_kontrak->CustomMsg = $Language->FieldPhrase($this->TableVar, $this->nilai_kontrak->Param, "CustomMsg");
         $this->Fields['nilai_kontrak'] = &$this->nilai_kontrak;
 
+        // foto_kontrak
+        $this->foto_kontrak = new DbField('pembuatan_mesin', 'pembuatan_mesin', 'x_foto_kontrak', 'foto_kontrak', '`foto_kontrak`', '`foto_kontrak`', 200, 255, -1, true, '`foto_kontrak`', false, false, false, 'IMAGE', 'FILE');
+        $this->foto_kontrak->Sortable = true; // Allow sort
+        $this->foto_kontrak->CustomMsg = $Language->FieldPhrase($this->TableVar, $this->foto_kontrak->Param, "CustomMsg");
+        $this->Fields['foto_kontrak'] = &$this->foto_kontrak;
+
         // upload_ktp
         $this->upload_ktp = new DbField('pembuatan_mesin', 'pembuatan_mesin', 'x_upload_ktp', 'upload_ktp', '`upload_ktp`', '`upload_ktp`', 200, 255, -1, true, '`upload_ktp`', false, false, false, 'IMAGE', 'FILE');
         $this->upload_ktp->Nullable = false; // NOT NULL field
@@ -173,6 +181,18 @@ class PembuatanMesin extends DbTable
         $this->foto_mesin->Sortable = true; // Allow sort
         $this->foto_mesin->CustomMsg = $Language->FieldPhrase($this->TableVar, $this->foto_mesin->Param, "CustomMsg");
         $this->Fields['foto_mesin'] = &$this->foto_mesin;
+
+        // status
+        $this->status = new DbField('pembuatan_mesin', 'pembuatan_mesin', 'x_status', 'status', '`status`', '`status`', 200, 255, -1, false, '`status`', false, false, false, 'FORMATTED TEXT', 'SELECT');
+        $this->status->Nullable = false; // NOT NULL field
+        $this->status->Required = true; // Required field
+        $this->status->Sortable = true; // Allow sort
+        $this->status->UsePleaseSelect = true; // Use PleaseSelect by default
+        $this->status->PleaseSelectText = $Language->phrase("PleaseSelect"); // "PleaseSelect" text
+        $this->status->Lookup = new Lookup('status', 'pembuatan_mesin', false, '', ["","","",""], [], [], [], [], [], [], '', '');
+        $this->status->OptionCount = 3;
+        $this->status->CustomMsg = $Language->FieldPhrase($this->TableVar, $this->status->Param, "CustomMsg");
+        $this->Fields['status'] = &$this->status;
 
         // created_at
         $this->created_at = new DbField('pembuatan_mesin', 'pembuatan_mesin', 'x_created_at', 'created_at', '`created_at`', CastDateFieldForLike("`created_at`", 0, "DB"), 135, 19, 0, false, '`created_at`', false, false, false, 'FORMATTED TEXT', 'TEXT');
@@ -610,8 +630,10 @@ class PembuatanMesin extends DbTable
         $this->nomor_kontrak->DbValue = $row['nomor_kontrak'];
         $this->tanggal_kontrak->DbValue = $row['tanggal_kontrak'];
         $this->nilai_kontrak->DbValue = $row['nilai_kontrak'];
+        $this->foto_kontrak->Upload->DbValue = $row['foto_kontrak'];
         $this->upload_ktp->Upload->DbValue = $row['upload_ktp'];
         $this->foto_mesin->Upload->DbValue = $row['foto_mesin'];
+        $this->status->DbValue = $row['status'];
         $this->created_at->DbValue = $row['created_at'];
         $this->updated_at->DbValue = $row['updated_at'];
     }
@@ -620,6 +642,12 @@ class PembuatanMesin extends DbTable
     public function deleteUploadedFiles($row)
     {
         $this->loadDbValues($row);
+        $oldFiles = EmptyValue($row['foto_kontrak']) ? [] : [$row['foto_kontrak']];
+        foreach ($oldFiles as $oldFile) {
+            if (file_exists($this->foto_kontrak->oldPhysicalUploadPath() . $oldFile)) {
+                @unlink($this->foto_kontrak->oldPhysicalUploadPath() . $oldFile);
+            }
+        }
         $oldFiles = EmptyValue($row['upload_ktp']) ? [] : [$row['upload_ktp']];
         foreach ($oldFiles as $oldFile) {
             if (file_exists($this->upload_ktp->oldPhysicalUploadPath() . $oldFile)) {
@@ -956,10 +984,13 @@ SORTHTML;
         $this->nomor_kontrak->setDbValue($row['nomor_kontrak']);
         $this->tanggal_kontrak->setDbValue($row['tanggal_kontrak']);
         $this->nilai_kontrak->setDbValue($row['nilai_kontrak']);
+        $this->foto_kontrak->Upload->DbValue = $row['foto_kontrak'];
+        $this->foto_kontrak->setDbValue($this->foto_kontrak->Upload->DbValue);
         $this->upload_ktp->Upload->DbValue = $row['upload_ktp'];
         $this->upload_ktp->setDbValue($this->upload_ktp->Upload->DbValue);
         $this->foto_mesin->Upload->DbValue = $row['foto_mesin'];
         $this->foto_mesin->setDbValue($this->foto_mesin->Upload->DbValue);
+        $this->status->setDbValue($row['status']);
         $this->created_at->setDbValue($row['created_at']);
         $this->updated_at->setDbValue($row['updated_at']);
     }
@@ -994,9 +1025,13 @@ SORTHTML;
 
         // nilai_kontrak
 
+        // foto_kontrak
+
         // upload_ktp
 
         // foto_mesin
+
+        // status
 
         // created_at
 
@@ -1043,6 +1078,17 @@ SORTHTML;
         $this->nilai_kontrak->ViewValue = $this->nilai_kontrak->CurrentValue;
         $this->nilai_kontrak->ViewCustomAttributes = "";
 
+        // foto_kontrak
+        if (!EmptyValue($this->foto_kontrak->Upload->DbValue)) {
+            $this->foto_kontrak->ImageWidth = 200;
+            $this->foto_kontrak->ImageHeight = 0;
+            $this->foto_kontrak->ImageAlt = $this->foto_kontrak->alt();
+            $this->foto_kontrak->ViewValue = $this->foto_kontrak->Upload->DbValue;
+        } else {
+            $this->foto_kontrak->ViewValue = "";
+        }
+        $this->foto_kontrak->ViewCustomAttributes = "";
+
         // upload_ktp
         if (!EmptyValue($this->upload_ktp->Upload->DbValue)) {
             $this->upload_ktp->ImageWidth = 200;
@@ -1064,6 +1110,14 @@ SORTHTML;
             $this->foto_mesin->ViewValue = "";
         }
         $this->foto_mesin->ViewCustomAttributes = "";
+
+        // status
+        if (strval($this->status->CurrentValue) != "") {
+            $this->status->ViewValue = $this->status->optionCaption($this->status->CurrentValue);
+        } else {
+            $this->status->ViewValue = null;
+        }
+        $this->status->ViewCustomAttributes = "";
 
         // created_at
         $this->created_at->ViewValue = $this->created_at->CurrentValue;
@@ -1125,6 +1179,27 @@ SORTHTML;
         $this->nilai_kontrak->HrefValue = "";
         $this->nilai_kontrak->TooltipValue = "";
 
+        // foto_kontrak
+        $this->foto_kontrak->LinkCustomAttributes = "";
+        if (!EmptyValue($this->foto_kontrak->Upload->DbValue)) {
+            $this->foto_kontrak->HrefValue = GetFileUploadUrl($this->foto_kontrak, $this->foto_kontrak->htmlDecode($this->foto_kontrak->Upload->DbValue)); // Add prefix/suffix
+            $this->foto_kontrak->LinkAttrs["target"] = ""; // Add target
+            if ($this->isExport()) {
+                $this->foto_kontrak->HrefValue = FullUrl($this->foto_kontrak->HrefValue, "href");
+            }
+        } else {
+            $this->foto_kontrak->HrefValue = "";
+        }
+        $this->foto_kontrak->ExportHrefValue = $this->foto_kontrak->UploadPath . $this->foto_kontrak->Upload->DbValue;
+        $this->foto_kontrak->TooltipValue = "";
+        if ($this->foto_kontrak->UseColorbox) {
+            if (EmptyValue($this->foto_kontrak->TooltipValue)) {
+                $this->foto_kontrak->LinkAttrs["title"] = $Language->phrase("ViewImageGallery");
+            }
+            $this->foto_kontrak->LinkAttrs["data-rel"] = "pembuatan_mesin_x_foto_kontrak";
+            $this->foto_kontrak->LinkAttrs->appendClass("ew-lightbox");
+        }
+
         // upload_ktp
         $this->upload_ktp->LinkCustomAttributes = "";
         if (!EmptyValue($this->upload_ktp->Upload->DbValue)) {
@@ -1166,6 +1241,11 @@ SORTHTML;
             $this->foto_mesin->LinkAttrs["data-rel"] = "pembuatan_mesin_x_foto_mesin";
             $this->foto_mesin->LinkAttrs->appendClass("ew-lightbox");
         }
+
+        // status
+        $this->status->LinkCustomAttributes = "";
+        $this->status->HrefValue = "";
+        $this->status->TooltipValue = "";
 
         // created_at
         $this->created_at->LinkCustomAttributes = "";
@@ -1273,6 +1353,21 @@ SORTHTML;
         $this->nilai_kontrak->EditValue = $this->nilai_kontrak->CurrentValue;
         $this->nilai_kontrak->PlaceHolder = RemoveHtml($this->nilai_kontrak->caption());
 
+        // foto_kontrak
+        $this->foto_kontrak->EditAttrs["class"] = "form-control";
+        $this->foto_kontrak->EditCustomAttributes = "";
+        if (!EmptyValue($this->foto_kontrak->Upload->DbValue)) {
+            $this->foto_kontrak->ImageWidth = 200;
+            $this->foto_kontrak->ImageHeight = 0;
+            $this->foto_kontrak->ImageAlt = $this->foto_kontrak->alt();
+            $this->foto_kontrak->EditValue = $this->foto_kontrak->Upload->DbValue;
+        } else {
+            $this->foto_kontrak->EditValue = "";
+        }
+        if (!EmptyValue($this->foto_kontrak->CurrentValue)) {
+            $this->foto_kontrak->Upload->FileName = $this->foto_kontrak->CurrentValue;
+        }
+
         // upload_ktp
         $this->upload_ktp->EditAttrs["class"] = "form-control";
         $this->upload_ktp->EditCustomAttributes = "";
@@ -1302,6 +1397,12 @@ SORTHTML;
         if (!EmptyValue($this->foto_mesin->CurrentValue)) {
             $this->foto_mesin->Upload->FileName = $this->foto_mesin->CurrentValue;
         }
+
+        // status
+        $this->status->EditAttrs["class"] = "form-control";
+        $this->status->EditCustomAttributes = "";
+        $this->status->EditValue = $this->status->options(true);
+        $this->status->PlaceHolder = RemoveHtml($this->status->caption());
 
         // created_at
         $this->created_at->EditAttrs["class"] = "form-control";
@@ -1353,8 +1454,10 @@ SORTHTML;
                     $doc->exportCaption($this->nomor_kontrak);
                     $doc->exportCaption($this->tanggal_kontrak);
                     $doc->exportCaption($this->nilai_kontrak);
+                    $doc->exportCaption($this->foto_kontrak);
                     $doc->exportCaption($this->upload_ktp);
                     $doc->exportCaption($this->foto_mesin);
+                    $doc->exportCaption($this->status);
                     $doc->exportCaption($this->created_at);
                     $doc->exportCaption($this->updated_at);
                 } else {
@@ -1368,8 +1471,10 @@ SORTHTML;
                     $doc->exportCaption($this->nomor_kontrak);
                     $doc->exportCaption($this->tanggal_kontrak);
                     $doc->exportCaption($this->nilai_kontrak);
+                    $doc->exportCaption($this->foto_kontrak);
                     $doc->exportCaption($this->upload_ktp);
                     $doc->exportCaption($this->foto_mesin);
+                    $doc->exportCaption($this->status);
                     $doc->exportCaption($this->created_at);
                     $doc->exportCaption($this->updated_at);
                 }
@@ -1411,8 +1516,10 @@ SORTHTML;
                         $doc->exportField($this->nomor_kontrak);
                         $doc->exportField($this->tanggal_kontrak);
                         $doc->exportField($this->nilai_kontrak);
+                        $doc->exportField($this->foto_kontrak);
                         $doc->exportField($this->upload_ktp);
                         $doc->exportField($this->foto_mesin);
+                        $doc->exportField($this->status);
                         $doc->exportField($this->created_at);
                         $doc->exportField($this->updated_at);
                     } else {
@@ -1426,8 +1533,10 @@ SORTHTML;
                         $doc->exportField($this->nomor_kontrak);
                         $doc->exportField($this->tanggal_kontrak);
                         $doc->exportField($this->nilai_kontrak);
+                        $doc->exportField($this->foto_kontrak);
                         $doc->exportField($this->upload_ktp);
                         $doc->exportField($this->foto_mesin);
+                        $doc->exportField($this->status);
                         $doc->exportField($this->created_at);
                         $doc->exportField($this->updated_at);
                     }
@@ -1456,7 +1565,10 @@ SORTHTML;
         $fldName = "";
         $fileNameFld = "";
         $fileTypeFld = "";
-        if ($fldparm == 'upload_ktp') {
+        if ($fldparm == 'foto_kontrak') {
+            $fldName = "foto_kontrak";
+            $fileNameFld = "foto_kontrak";
+        } elseif ($fldparm == 'upload_ktp') {
             $fldName = "upload_ktp";
             $fileNameFld = "upload_ktp";
         } elseif ($fldparm == 'foto_mesin') {

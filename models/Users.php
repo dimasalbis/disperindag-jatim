@@ -106,7 +106,7 @@ class Users extends DbTable
         $this->Fields['email_verified_at'] = &$this->email_verified_at;
 
         // password
-        $this->_password = new DbField('users', 'users', 'x__password', 'password', '`password`', '`password`', 200, 255, -1, false, '`password`', false, false, false, 'FORMATTED TEXT', 'TEXT');
+        $this->_password = new DbField('users', 'users', 'x__password', 'password', '`password`', '`password`', 200, 255, -1, false, '`password`', false, false, false, 'FORMATTED TEXT', 'PASSWORD');
         if (Config("ENCRYPTED_PASSWORD")) {
             $this->_password->Raw = true;
         }
@@ -953,7 +953,7 @@ SORTHTML;
         $this->email_verified_at->ViewCustomAttributes = "";
 
         // password
-        $this->_password->ViewValue = $this->_password->CurrentValue;
+        $this->_password->ViewValue = $Language->phrase("PasswordMask");
         $this->_password->ViewCustomAttributes = "";
 
         // remember_token
@@ -1088,10 +1088,7 @@ SORTHTML;
         // password
         $this->_password->EditAttrs["class"] = "form-control";
         $this->_password->EditCustomAttributes = "";
-        if (!$this->_password->Raw) {
-            $this->_password->CurrentValue = HtmlDecode($this->_password->CurrentValue);
-        }
-        $this->_password->EditValue = $this->_password->CurrentValue;
+        $this->_password->EditValue = $Language->phrase("PasswordMask"); // Show as masked password
         $this->_password->PlaceHolder = RemoveHtml($this->_password->caption());
 
         // remember_token
@@ -1233,6 +1230,46 @@ SORTHTML;
         if (!$doc->ExportCustom) {
             $doc->exportTableFooter();
         }
+    }
+
+    // Send register email
+    public function sendRegisterEmail($row)
+    {
+        $email = $this->prepareRegisterEmail($row);
+        $args = [];
+        $args["rs"] = $row;
+        $emailSent = false;
+        if ($this->emailSending($email, $args)) { // Use Email_Sending server event of user table
+            $emailSent = $email->send();
+        }
+        return $emailSent;
+    }
+
+    // Prepare register email
+    public function prepareRegisterEmail($row = null, $langId = "")
+    {
+        global $CurrentForm;
+        $email = new Email();
+        $email->load(Config("EMAIL_REGISTER_TEMPLATE"), $langId);
+        $receiverEmail = $row === null ? $this->_email->CurrentValue : GetUserInfo(Config("USER_EMAIL_FIELD_NAME"), $row);
+        if ($receiverEmail == "") { // Send to recipient directly
+            $receiverEmail = Config("RECIPIENT_EMAIL");
+            $bccEmail = "";
+        } else { // Bcc recipient
+            $bccEmail = Config("RECIPIENT_EMAIL");
+        }
+        $email->replaceSender(Config("SENDER_EMAIL")); // Replace Sender
+        $email->replaceRecipient($receiverEmail); // Replace Recipient
+        if ($bccEmail != "") // Add Bcc
+            $email->addBcc($bccEmail);
+        $email->replaceContent('<!--FieldCaption_name-->', $this->name->caption());
+        $email->replaceContent('<!--name-->', $row === null ? strval($this->name->FormValue) : GetUserInfo('name', $row));
+        $email->replaceContent('<!--FieldCaption_email-->', $this->_email->caption());
+        $email->replaceContent('<!--email-->', $row === null ? strval($this->_email->FormValue) : GetUserInfo('email', $row));
+        $email->replaceContent('<!--FieldCaption_password-->', $this->_password->caption());
+        $email->replaceContent('<!--password-->', $row === null ? strval($this->_password->FormValue) : GetUserInfo('password', $row));
+        $email->Content = preg_replace('/<!--\s*register_activate_link_begin[\s\S]*?-->[\s\S]*?<!--\s*register_activate_link_end[\s\S]*?-->/i', '', $email->Content); // Remove activate link block
+        return $email;
     }
 
     // Get file data

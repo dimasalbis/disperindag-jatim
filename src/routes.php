@@ -220,6 +220,57 @@ return function (App $app) {
         }
     );
 
+    // pelatihan_siswa
+    $app->any('/pelatihansiswalist[/{id}]', PelatihanSiswaController::class . ':list')->add(PermissionMiddleware::class)->setName('pelatihansiswalist-pelatihan_siswa-list'); // list
+    $app->any('/pelatihansiswaadd[/{id}]', PelatihanSiswaController::class . ':add')->add(PermissionMiddleware::class)->setName('pelatihansiswaadd-pelatihan_siswa-add'); // add
+    $app->any('/pelatihansiswaview[/{id}]', PelatihanSiswaController::class . ':view')->add(PermissionMiddleware::class)->setName('pelatihansiswaview-pelatihan_siswa-view'); // view
+    $app->any('/pelatihansiswaedit[/{id}]', PelatihanSiswaController::class . ':edit')->add(PermissionMiddleware::class)->setName('pelatihansiswaedit-pelatihan_siswa-edit'); // edit
+    $app->any('/pelatihansiswadelete[/{id}]', PelatihanSiswaController::class . ':delete')->add(PermissionMiddleware::class)->setName('pelatihansiswadelete-pelatihan_siswa-delete'); // delete
+    $app->group(
+        '/pelatihan_siswa',
+        function (RouteCollectorProxy $group) {
+            $group->any('/' . Config("LIST_ACTION") . '[/{id}]', PelatihanSiswaController::class . ':list')->add(PermissionMiddleware::class)->setName('pelatihan_siswa/list-pelatihan_siswa-list-2'); // list
+            $group->any('/' . Config("ADD_ACTION") . '[/{id}]', PelatihanSiswaController::class . ':add')->add(PermissionMiddleware::class)->setName('pelatihan_siswa/add-pelatihan_siswa-add-2'); // add
+            $group->any('/' . Config("VIEW_ACTION") . '[/{id}]', PelatihanSiswaController::class . ':view')->add(PermissionMiddleware::class)->setName('pelatihan_siswa/view-pelatihan_siswa-view-2'); // view
+            $group->any('/' . Config("EDIT_ACTION") . '[/{id}]', PelatihanSiswaController::class . ':edit')->add(PermissionMiddleware::class)->setName('pelatihan_siswa/edit-pelatihan_siswa-edit-2'); // edit
+            $group->any('/' . Config("DELETE_ACTION") . '[/{id}]', PelatihanSiswaController::class . ':delete')->add(PermissionMiddleware::class)->setName('pelatihan_siswa/delete-pelatihan_siswa-delete-2'); // delete
+        }
+    );
+
+    // pendataan_lahan
+    $app->any('/pendataanlahanlist[/{id}]', PendataanLahanController::class . ':list')->add(PermissionMiddleware::class)->setName('pendataanlahanlist-pendataan_lahan-list'); // list
+    $app->any('/pendataanlahanadd[/{id}]', PendataanLahanController::class . ':add')->add(PermissionMiddleware::class)->setName('pendataanlahanadd-pendataan_lahan-add'); // add
+    $app->any('/pendataanlahanview[/{id}]', PendataanLahanController::class . ':view')->add(PermissionMiddleware::class)->setName('pendataanlahanview-pendataan_lahan-view'); // view
+    $app->any('/pendataanlahanedit[/{id}]', PendataanLahanController::class . ':edit')->add(PermissionMiddleware::class)->setName('pendataanlahanedit-pendataan_lahan-edit'); // edit
+    $app->any('/pendataanlahandelete[/{id}]', PendataanLahanController::class . ':delete')->add(PermissionMiddleware::class)->setName('pendataanlahandelete-pendataan_lahan-delete'); // delete
+    $app->group(
+        '/pendataan_lahan',
+        function (RouteCollectorProxy $group) {
+            $group->any('/' . Config("LIST_ACTION") . '[/{id}]', PendataanLahanController::class . ':list')->add(PermissionMiddleware::class)->setName('pendataan_lahan/list-pendataan_lahan-list-2'); // list
+            $group->any('/' . Config("ADD_ACTION") . '[/{id}]', PendataanLahanController::class . ':add')->add(PermissionMiddleware::class)->setName('pendataan_lahan/add-pendataan_lahan-add-2'); // add
+            $group->any('/' . Config("VIEW_ACTION") . '[/{id}]', PendataanLahanController::class . ':view')->add(PermissionMiddleware::class)->setName('pendataan_lahan/view-pendataan_lahan-view-2'); // view
+            $group->any('/' . Config("EDIT_ACTION") . '[/{id}]', PendataanLahanController::class . ':edit')->add(PermissionMiddleware::class)->setName('pendataan_lahan/edit-pendataan_lahan-edit-2'); // edit
+            $group->any('/' . Config("DELETE_ACTION") . '[/{id}]', PendataanLahanController::class . ':delete')->add(PermissionMiddleware::class)->setName('pendataan_lahan/delete-pendataan_lahan-delete-2'); // delete
+        }
+    );
+
+    // statuslevels
+    $app->any('/statuslevelslist[/{statuslevelid}]', StatuslevelsController::class . ':list')->add(PermissionMiddleware::class)->setName('statuslevelslist-statuslevels-list'); // list
+    $app->any('/statuslevelsadd[/{statuslevelid}]', StatuslevelsController::class . ':add')->add(PermissionMiddleware::class)->setName('statuslevelsadd-statuslevels-add'); // add
+    $app->any('/statuslevelsview[/{statuslevelid}]', StatuslevelsController::class . ':view')->add(PermissionMiddleware::class)->setName('statuslevelsview-statuslevels-view'); // view
+    $app->any('/statuslevelsedit[/{statuslevelid}]', StatuslevelsController::class . ':edit')->add(PermissionMiddleware::class)->setName('statuslevelsedit-statuslevels-edit'); // edit
+    $app->any('/statuslevelsdelete[/{statuslevelid}]', StatuslevelsController::class . ':delete')->add(PermissionMiddleware::class)->setName('statuslevelsdelete-statuslevels-delete'); // delete
+    $app->group(
+        '/statuslevels',
+        function (RouteCollectorProxy $group) {
+            $group->any('/' . Config("LIST_ACTION") . '[/{statuslevelid}]', StatuslevelsController::class . ':list')->add(PermissionMiddleware::class)->setName('statuslevels/list-statuslevels-list-2'); // list
+            $group->any('/' . Config("ADD_ACTION") . '[/{statuslevelid}]', StatuslevelsController::class . ':add')->add(PermissionMiddleware::class)->setName('statuslevels/add-statuslevels-add-2'); // add
+            $group->any('/' . Config("VIEW_ACTION") . '[/{statuslevelid}]', StatuslevelsController::class . ':view')->add(PermissionMiddleware::class)->setName('statuslevels/view-statuslevels-view-2'); // view
+            $group->any('/' . Config("EDIT_ACTION") . '[/{statuslevelid}]', StatuslevelsController::class . ':edit')->add(PermissionMiddleware::class)->setName('statuslevels/edit-statuslevels-edit-2'); // edit
+            $group->any('/' . Config("DELETE_ACTION") . '[/{statuslevelid}]', StatuslevelsController::class . ':delete')->add(PermissionMiddleware::class)->setName('statuslevels/delete-statuslevels-delete-2'); // delete
+        }
+    );
+
     // error
     $app->any('/error', OthersController::class . ':error')->add(PermissionMiddleware::class)->setName('error');
 
@@ -228,6 +279,15 @@ return function (App $app) {
 
     // login
     $app->any('/login', OthersController::class . ':login')->add(PermissionMiddleware::class)->setName('login');
+
+    // reset_password
+    $app->any('/resetpassword', OthersController::class . ':resetpassword')->add(PermissionMiddleware::class)->setName('resetpassword');
+
+    // change_password
+    $app->any('/changepassword', OthersController::class . ':changepassword')->add(PermissionMiddleware::class)->setName('changepassword');
+
+    // register
+    $app->any('/register', OthersController::class . ':register')->add(PermissionMiddleware::class)->setName('register');
 
     // userpriv
     $app->any('/userpriv', OthersController::class . ':userpriv')->add(PermissionMiddleware::class)->setName('userpriv');

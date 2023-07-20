@@ -517,6 +517,13 @@ class MMesinView extends MMesin
 
         // Is modal
         $this->IsModal = Param("modal") == "1";
+
+        // Update last accessed time
+        if (!$UserProfile->isValidUser(CurrentUserName(), session_id())) {
+            Write($Language->phrase("UserProfileCorrupted"));
+            $this->terminate();
+            return;
+        }
         $this->CurrentAction = Param("action"); // Set up current action
         $this->id->setVisibility();
         $this->gambar_mesin->setVisibility();
@@ -708,7 +715,7 @@ class MMesinView extends MMesin
         // Set up action default
         $option = $options["action"];
         $option->DropDownButtonPhrase = $Language->phrase("ButtonActions");
-        $option->UseDropDownButton = true;
+        $option->UseDropDownButton = false;
         $option->UseButtonGroup = true;
         $item = &$option->add($option->GroupOptionName);
         $item->Body = "";

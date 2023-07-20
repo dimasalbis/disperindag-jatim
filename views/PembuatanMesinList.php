@@ -111,6 +111,9 @@ $Page->renderListOptions();
 // Render list options (header, left)
 $Page->ListOptions->render("header", "left");
 ?>
+<?php if ($Page->id->Visible) { // id ?>
+        <th data-name="id" class="<?= $Page->id->headerCellClass() ?>"><div id="elh_pembuatan_mesin_id" class="pembuatan_mesin_id"><?= $Page->renderSort($Page->id) ?></div></th>
+<?php } ?>
 <?php if ($Page->nama_mesin->Visible) { // nama_mesin ?>
         <th data-name="nama_mesin" class="<?= $Page->nama_mesin->headerCellClass() ?>"><div id="elh_pembuatan_mesin_nama_mesin" class="pembuatan_mesin_nama_mesin"><?= $Page->renderSort($Page->nama_mesin) ?></div></th>
 <?php } ?>
@@ -134,6 +137,9 @@ $Page->ListOptions->render("header", "left");
 <?php } ?>
 <?php if ($Page->foto_mesin->Visible) { // foto_mesin ?>
         <th data-name="foto_mesin" class="<?= $Page->foto_mesin->headerCellClass() ?>"><div id="elh_pembuatan_mesin_foto_mesin" class="pembuatan_mesin_foto_mesin"><?= $Page->renderSort($Page->foto_mesin) ?></div></th>
+<?php } ?>
+<?php if ($Page->status->Visible) { // status ?>
+        <th data-name="status" class="<?= $Page->status->headerCellClass() ?>"><div id="elh_pembuatan_mesin_status" class="pembuatan_mesin_status"><?= $Page->renderSort($Page->status) ?></div></th>
 <?php } ?>
 <?php
 // Render list options (header, right)
@@ -202,6 +208,14 @@ while ($Page->RecordCount < $Page->StopRecord) {
 // Render list options (body, left)
 $Page->ListOptions->render("body", "left", $Page->RowCount);
 ?>
+    <?php if ($Page->id->Visible) { // id ?>
+        <td data-name="id" <?= $Page->id->cellAttributes() ?>>
+<span id="el<?= $Page->RowCount ?>_pembuatan_mesin_id">
+<span<?= $Page->id->viewAttributes() ?>>
+<?= $Page->id->getViewValue() ?></span>
+</span>
+</td>
+    <?php } ?>
     <?php if ($Page->nama_mesin->Visible) { // nama_mesin ?>
         <td data-name="nama_mesin" <?= $Page->nama_mesin->cellAttributes() ?>>
 <span id="el<?= $Page->RowCount ?>_pembuatan_mesin_nama_mesin">
@@ -264,6 +278,14 @@ $Page->ListOptions->render("body", "left", $Page->RowCount);
 <span>
 <?= GetFileViewTag($Page->foto_mesin, $Page->foto_mesin->getViewValue(), false) ?>
 </span>
+</span>
+</td>
+    <?php } ?>
+    <?php if ($Page->status->Visible) { // status ?>
+        <td data-name="status" <?= $Page->status->cellAttributes() ?>>
+<span id="el<?= $Page->RowCount ?>_pembuatan_mesin_status">
+<span<?= $Page->status->viewAttributes() ?>>
+<?= $Page->status->getViewValue() ?></span>
 </span>
 </td>
     <?php } ?>

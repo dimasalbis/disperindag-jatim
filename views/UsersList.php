@@ -111,29 +111,14 @@ $Page->renderListOptions();
 // Render list options (header, left)
 $Page->ListOptions->render("header", "left");
 ?>
-<?php if ($Page->id->Visible) { // id ?>
-        <th data-name="id" class="<?= $Page->id->headerCellClass() ?>"><div id="elh_users_id" class="users_id"><?= $Page->renderSort($Page->id) ?></div></th>
-<?php } ?>
 <?php if ($Page->name->Visible) { // name ?>
         <th data-name="name" class="<?= $Page->name->headerCellClass() ?>"><div id="elh_users_name" class="users_name"><?= $Page->renderSort($Page->name) ?></div></th>
 <?php } ?>
 <?php if ($Page->_email->Visible) { // email ?>
         <th data-name="_email" class="<?= $Page->_email->headerCellClass() ?>"><div id="elh_users__email" class="users__email"><?= $Page->renderSort($Page->_email) ?></div></th>
 <?php } ?>
-<?php if ($Page->email_verified_at->Visible) { // email_verified_at ?>
-        <th data-name="email_verified_at" class="<?= $Page->email_verified_at->headerCellClass() ?>"><div id="elh_users_email_verified_at" class="users_email_verified_at"><?= $Page->renderSort($Page->email_verified_at) ?></div></th>
-<?php } ?>
 <?php if ($Page->_password->Visible) { // password ?>
         <th data-name="_password" class="<?= $Page->_password->headerCellClass() ?>"><div id="elh_users__password" class="users__password"><?= $Page->renderSort($Page->_password) ?></div></th>
-<?php } ?>
-<?php if ($Page->remember_token->Visible) { // remember_token ?>
-        <th data-name="remember_token" class="<?= $Page->remember_token->headerCellClass() ?>"><div id="elh_users_remember_token" class="users_remember_token"><?= $Page->renderSort($Page->remember_token) ?></div></th>
-<?php } ?>
-<?php if ($Page->created_at->Visible) { // created_at ?>
-        <th data-name="created_at" class="<?= $Page->created_at->headerCellClass() ?>"><div id="elh_users_created_at" class="users_created_at"><?= $Page->renderSort($Page->created_at) ?></div></th>
-<?php } ?>
-<?php if ($Page->updated_at->Visible) { // updated_at ?>
-        <th data-name="updated_at" class="<?= $Page->updated_at->headerCellClass() ?>"><div id="elh_users_updated_at" class="users_updated_at"><?= $Page->renderSort($Page->updated_at) ?></div></th>
 <?php } ?>
 <?php if ($Page->level->Visible) { // level ?>
         <th data-name="level" class="<?= $Page->level->headerCellClass() ?>"><div id="elh_users_level" class="users_level"><?= $Page->renderSort($Page->level) ?></div></th>
@@ -205,14 +190,6 @@ while ($Page->RecordCount < $Page->StopRecord) {
 // Render list options (body, left)
 $Page->ListOptions->render("body", "left", $Page->RowCount);
 ?>
-    <?php if ($Page->id->Visible) { // id ?>
-        <td data-name="id" <?= $Page->id->cellAttributes() ?>>
-<span id="el<?= $Page->RowCount ?>_users_id">
-<span<?= $Page->id->viewAttributes() ?>>
-<?= $Page->id->getViewValue() ?></span>
-</span>
-</td>
-    <?php } ?>
     <?php if ($Page->name->Visible) { // name ?>
         <td data-name="name" <?= $Page->name->cellAttributes() ?>>
 <span id="el<?= $Page->RowCount ?>_users_name">
@@ -229,43 +206,11 @@ $Page->ListOptions->render("body", "left", $Page->RowCount);
 </span>
 </td>
     <?php } ?>
-    <?php if ($Page->email_verified_at->Visible) { // email_verified_at ?>
-        <td data-name="email_verified_at" <?= $Page->email_verified_at->cellAttributes() ?>>
-<span id="el<?= $Page->RowCount ?>_users_email_verified_at">
-<span<?= $Page->email_verified_at->viewAttributes() ?>>
-<?= $Page->email_verified_at->getViewValue() ?></span>
-</span>
-</td>
-    <?php } ?>
     <?php if ($Page->_password->Visible) { // password ?>
         <td data-name="_password" <?= $Page->_password->cellAttributes() ?>>
 <span id="el<?= $Page->RowCount ?>_users__password">
 <span<?= $Page->_password->viewAttributes() ?>>
 <?= $Page->_password->getViewValue() ?></span>
-</span>
-</td>
-    <?php } ?>
-    <?php if ($Page->remember_token->Visible) { // remember_token ?>
-        <td data-name="remember_token" <?= $Page->remember_token->cellAttributes() ?>>
-<span id="el<?= $Page->RowCount ?>_users_remember_token">
-<span<?= $Page->remember_token->viewAttributes() ?>>
-<?= $Page->remember_token->getViewValue() ?></span>
-</span>
-</td>
-    <?php } ?>
-    <?php if ($Page->created_at->Visible) { // created_at ?>
-        <td data-name="created_at" <?= $Page->created_at->cellAttributes() ?>>
-<span id="el<?= $Page->RowCount ?>_users_created_at">
-<span<?= $Page->created_at->viewAttributes() ?>>
-<?= $Page->created_at->getViewValue() ?></span>
-</span>
-</td>
-    <?php } ?>
-    <?php if ($Page->updated_at->Visible) { // updated_at ?>
-        <td data-name="updated_at" <?= $Page->updated_at->cellAttributes() ?>>
-<span id="el<?= $Page->RowCount ?>_users_updated_at">
-<span<?= $Page->updated_at->viewAttributes() ?>>
-<?= $Page->updated_at->getViewValue() ?></span>
 </span>
 </td>
     <?php } ?>

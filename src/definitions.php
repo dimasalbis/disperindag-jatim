@@ -64,6 +64,9 @@ return [
     "users" => \DI\create(Users::class),
     "m_mesin" => \DI\create(MMesin::class),
     "perusahaan_penampung" => \DI\create(PerusahaanPenampung::class),
+    "pelatihan_siswa" => \DI\create(PelatihanSiswa::class),
+    "pendataan_lahan" => \DI\create(PendataanLahan::class),
+    "statuslevels" => \DI\create(Statuslevels::class),
 
     // User table
     "usertable" => \DI\get("users"),

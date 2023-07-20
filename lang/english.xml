@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2023/7/11" version="17.0.5" id="en" name="English" desc="English" author="e.World Technology Limited">
+<ew-language date="2023/7/20" version="17.0.5" id="en" name="English" desc="English" author="e.World Technology Limited">
   <!--
     *** Important Notes:
     1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -927,26 +927,44 @@
     <menu id="15">
       <phrase id="menutext" value="Master" />
     </menu>
+    <menu id="17">
+      <phrase id="menutext" value="Pelatihan Siswa" />
+    </menu>
+    <menu id="18">
+      <phrase id="menutext" value="Pendataan Lahan" />
+    </menu>
     <menu id="11">
-      <phrase id="menutext" value="users" />
+      <phrase id="menutext" value="User" />
     </menu>
     <menu id="13">
-      <phrase id="menutext" value="mesin" />
+      <phrase id="menutext" value="Mesin" />
     </menu>
     <menu id="6">
-      <phrase id="menutext" value="pembuatan mesin" />
+      <phrase id="menutext" value="Pembuatan Mesin" />
     </menu>
     <menu id="14">
-      <phrase id="menutext" value="perusahaan penampung" />
+      <phrase id="menutext" value="Perusahaan Penampung" />
     </menu>
     <menu id="12">
-      <phrase id="menutext" value="penyewaan mesin" />
-    </menu>
-    <menu id="1">
-      <phrase id="menutext" value="failed jobs" />
+      <phrase id="menutext" value="Penyewaan Mesin" />
     </menu>
     <menu id="16">
       <phrase id="menutext" value="Master" />
+    </menu>
+    <menu id="43">
+      <phrase id="menutext" value="Dashboard" />
+    </menu>
+    <menu id="33">
+      <phrase id="menutext" value="Admin" />
+    </menu>
+    <menu id="34">
+      <phrase id="menutext" value="statuslevels" />
+    </menu>
+    <menu id="10">
+      <phrase id="menutext" value="userlevels" />
+    </menu>
+    <menu id="1">
+      <phrase id="menutext" value="failed jobs" />
     </menu>
     <menu id="3">
       <phrase id="menutext" value="migrations" />
@@ -965,9 +983,6 @@
     </menu>
     <menu id="9">
       <phrase id="menutext" value="userlevelpermissions" />
-    </menu>
-    <menu id="10">
-      <phrase id="menutext" value="userlevels" />
     </menu>
     <table id="failed_jobs">
       <phrase id="tblcaption" value="failed jobs" />
@@ -1030,27 +1045,27 @@
       </field>
     </table>
     <table id="penyewaan_mesin">
-      <phrase id="tblcaption" value="penyewaan mesin" />
+      <phrase id="tblcaption" value="Penyewaan Mesin" />
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>
       <field id="nama_mesin">
-        <phrase id="fldcaption" value="nama mesin" />
+        <phrase id="fldcaption" value="Nama Mesin" />
       </field>
       <field id="no_seri">
-        <phrase id="fldcaption" value="no seri" />
+        <phrase id="fldcaption" value="No Seri" />
       </field>
       <field id="nama_penyewa">
-        <phrase id="fldcaption" value="nama penyewa" />
+        <phrase id="fldcaption" value="Nama Penyewa" />
       </field>
       <field id="alamat">
-        <phrase id="fldcaption" value="alamat" />
+        <phrase id="fldcaption" value="Alamat" />
       </field>
       <field id="no_hp">
-        <phrase id="fldcaption" value="no hp" />
+        <phrase id="fldcaption" value="No Telpon" />
       </field>
       <field id="nilai_sewa">
-        <phrase id="fldcaption" value="nilai sewa" />
+        <phrase id="fldcaption" value="Nilai Sewa" />
       </field>
       <field id="created_at">
         <phrase id="fldcaption" value="created at" />
@@ -1059,64 +1074,76 @@
         <phrase id="fldcaption" value="updated at" />
       </field>
       <field id="tanggal_sewa">
-        <phrase id="fldcaption" value="tanggal sewa" />
+        <phrase id="fldcaption" value="Tanggal Sewa" />
       </field>
       <field id="tanggal_kembali">
-        <phrase id="fldcaption" value="tanggal kembali" />
+        <phrase id="fldcaption" value="Tanggal Kembali" />
       </field>
       <field id="foto">
         <phrase id="fldcaption" value="Bukti Legalitas" />
       </field>
       <field id="gambar_mesin">
-        <phrase id="fldcaption" value="gambar mesin" />
+        <phrase id="fldcaption" value="Gambar Mesin" />
       </field>
       <field id="keterangan">
         <phrase id="fldcaption" value="keterangan" />
       </field>
     </table>
     <table id="pembuatan_mesin">
-      <phrase id="tblcaption" value="pembuatan mesin" />
+      <phrase id="tblcaption" value="Pembuatan Mesin" />
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>
       <field id="nama_mesin">
-        <phrase id="fldcaption" value="nama mesin" />
+        <phrase id="fldcaption" value="Nama Mesin" />
       </field>
       <field id="spesifikasi">
-        <phrase id="fldcaption" value="spesifikasi" />
+        <phrase id="fldcaption" value="Spesifikasi" />
       </field>
       <field id="jumlah">
-        <phrase id="fldcaption" value="jumlah" />
+        <phrase id="fldcaption" value="Jumlah" />
       </field>
       <field id="lama_pembuatan">
-        <phrase id="fldcaption" value="lama pembuatan" />
+        <phrase id="fldcaption" value="Lama Pembuatan" />
       </field>
       <field id="pemesan">
-        <phrase id="fldcaption" value="pemesan" />
+        <phrase id="fldcaption" value="Pemesan" />
       </field>
       <field id="alamat">
-        <phrase id="fldcaption" value="alamat" />
+        <phrase id="fldcaption" value="Alamat" />
       </field>
       <field id="nomor_kontrak">
-        <phrase id="fldcaption" value="nomor kontrak" />
+        <phrase id="fldcaption" value="Nomor Kontrak" />
       </field>
       <field id="tanggal_kontrak">
-        <phrase id="fldcaption" value="tanggal kontrak" />
+        <phrase id="fldcaption" value="Tanggal Kontrak" />
       </field>
       <field id="nilai_kontrak">
-        <phrase id="fldcaption" value="nilai kontrak" />
+        <phrase id="fldcaption" value="Nilai Kontrak" />
+      </field>
+      <field id="foto_kontrak">
+        <phrase id="fldcaption" value="Foto Kontrak" />
       </field>
       <field id="upload_ktp">
-        <phrase id="fldcaption" value="upload ktp" />
+        <phrase id="fldcaption" value="Upload KTP" />
       </field>
       <field id="foto_mesin">
-        <phrase id="fldcaption" value="foto mesin" />
+        <phrase id="fldcaption" value="Foto Mesin" />
+      </field>
+      <field id="status">
+        <phrase id="fldcaption" value="Status" />
+        <phrase id="fldtagvalue1" value="On Progress" />
+        <phrase id="fldtagcaption1" value="" />
+        <phrase id="fldtagvalue2" value="Canceled" />
+        <phrase id="fldtagcaption2" value="" />
+        <phrase id="fldtagvalue3" value="Success" />
+        <phrase id="fldtagcaption3" value="" />
       </field>
       <field id="created_at">
         <phrase id="fldcaption" value="created at" />
       </field>
       <field id="updated_at">
-        <phrase id="fldcaption" value="updated at" />
+        <phrase id="fldcaption" value="Keterangan" />
       </field>
     </table>
     <table id="permissions2">
@@ -1192,7 +1219,7 @@
       </field>
     </table>
     <table id="users">
-      <phrase id="tblcaption" value="users" />
+      <phrase id="tblcaption" value="User" />
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>
@@ -1222,27 +1249,101 @@
       </field>
     </table>
     <table id="m_mesin">
-      <phrase id="tblcaption" value="mesin" />
+      <phrase id="tblcaption" value="Mesin" />
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>
       <field id="gambar_mesin">
-        <phrase id="fldcaption" value="gambar mesin" />
+        <phrase id="fldcaption" value="Gambar Mesin" />
       </field>
       <field id="nama_mesin">
-        <phrase id="fldcaption" value="nama mesin" />
+        <phrase id="fldcaption" value="Nama Mesin" />
       </field>
       <field id="jumlah">
-        <phrase id="fldcaption" value="jumlah" />
+        <phrase id="fldcaption" value="Jumlah" />
       </field>
       <field id="dalam_penyewaan">
-        <phrase id="fldcaption" value="dalam penyewaan" />
+        <phrase id="fldcaption" value="Dalam Penyewaan" />
       </field>
       <field id="sisa_barang">
-        <phrase id="fldcaption" value="sisa barang" />
+        <phrase id="fldcaption" value="Sisa Barang" />
       </field>
       <field id="keterangan">
         <phrase id="fldcaption" value="keterangan" />
+      </field>
+      <field id="created_at">
+        <phrase id="fldcaption" value="created at" />
+      </field>
+      <field id="updated_at">
+        <phrase id="fldcaption" value="Keterangan" />
+      </field>
+    </table>
+    <table id="perusahaan_penampung">
+      <phrase id="tblcaption" value="Perusahaan Penampung" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="nama_perusahaan">
+        <phrase id="fldcaption" value="Nama Perusahaan" />
+      </field>
+      <field id="alamat">
+        <phrase id="fldcaption" value="Alamat" />
+      </field>
+      <field id="no_telpon">
+        <phrase id="fldcaption" value="No Telpon" />
+      </field>
+      <field id="contact_person">
+        <phrase id="fldcaption" value="Contact Person" />
+      </field>
+      <field id="bidang">
+        <phrase id="fldcaption" value="BIdang" />
+      </field>
+      <field id="keterangan">
+        <phrase id="fldcaption" value="keterangan" />
+      </field>
+      <field id="created_at">
+        <phrase id="fldcaption" value="created at" />
+      </field>
+      <field id="updated_at">
+        <phrase id="fldcaption" value="Keterangan" />
+      </field>
+    </table>
+    <table id="pelatihan_siswa">
+      <phrase id="tblcaption" value="Pelatihan Siswa" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="nama">
+        <phrase id="fldcaption" value="Nama" />
+      </field>
+      <field id="asal_sekolah">
+        <phrase id="fldcaption" value="Asala Sekolah" />
+      </field>
+      <field id="tempat_lahir">
+        <phrase id="fldcaption" value="Tempat Lahir" />
+      </field>
+      <field id="tanggal_lahir">
+        <phrase id="fldcaption" value="Tanggal Lahir" />
+        <phrase id="fldtagvalue1" value="Laki - laki" />
+        <phrase id="fldtagcaption1" value="" />
+        <phrase id="fldtagvalue2" value="Perempuan" />
+        <phrase id="fldtagcaption2" value="" />
+      </field>
+      <field id="jenis_kelamin">
+        <phrase id="fldcaption" value="Jenis Kelamin" />
+        <phrase id="fldtagvalue1" value="Laki - laki" />
+        <phrase id="fldtagcaption1" value="" />
+        <phrase id="fldtagvalue2" value="Perempuan" />
+        <phrase id="fldtagcaption2" value="" />
+      </field>
+      <field id="no_telpon">
+        <phrase id="fldcaption" value="No Telpon" />
+      </field>
+      <field id="_email">
+        <phrase id="fldcaption" value="Email" />
+      </field>
+      <field id="legalitas">
+        <phrase id="fldcaption" value="Bukti Identiras" />
       </field>
       <field id="created_at">
         <phrase id="fldcaption" value="created at" />
@@ -1251,34 +1352,64 @@
         <phrase id="fldcaption" value="updated at" />
       </field>
     </table>
-    <table id="perusahaan_penampung">
-      <phrase id="tblcaption" value="perusahaan penampung" />
+    <table id="pendataan_lahan">
+      <phrase id="tblcaption" value="Pendataan Lahan" />
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>
-      <field id="nama_perusahaan">
-        <phrase id="fldcaption" value="nama perusahaan" />
+      <field id="nama_ikm">
+        <phrase id="fldcaption" value="Nama IKM" />
+      </field>
+      <field id="penanggung_jawab">
+        <phrase id="fldcaption" value="Penanggung Jawab" />
       </field>
       <field id="alamat">
-        <phrase id="fldcaption" value="alamat" />
+        <phrase id="fldcaption" value="Alamat" />
       </field>
-      <field id="no_telpon">
-        <phrase id="fldcaption" value="no telpon" />
+      <field id="no_hp">
+        <phrase id="fldcaption" value="No Telpon" />
       </field>
-      <field id="contact_person">
-        <phrase id="fldcaption" value="contact person" />
+      <field id="produk">
+        <phrase id="fldcaption" value="Produk" />
       </field>
-      <field id="bidang">
-        <phrase id="fldcaption" value="bidang" />
+      <field id="lokasi_lahan">
+        <phrase id="fldcaption" value="Lokasi Lahan" />
+      </field>
+      <field id="luas_lahan">
+        <phrase id="fldcaption" value="Luas Lahan" />
+      </field>
+      <field id="nilai_sewa">
+        <phrase id="fldcaption" value="Nilai Sewa" />
+      </field>
+      <field id="upload_legalitas">
+        <phrase id="fldcaption" value="Legalitas" />
+      </field>
+      <field id="foto_lahan">
+        <phrase id="fldcaption" value="Foto Lahan" />
+        <phrase id="fldtagvalue1" value="On Progress" />
+        <phrase id="fldtagcaption1" value="" />
+        <phrase id="fldtagvalue2" value="Canceled" />
+        <phrase id="fldtagcaption2" value="" />
+        <phrase id="fldtagvalue3" value="Success" />
+        <phrase id="fldtagcaption3" value="" />
       </field>
       <field id="keterangan">
-        <phrase id="fldcaption" value="keterangan" />
+        <phrase id="fldcaption" value="Keterangan" />
       </field>
       <field id="created_at">
         <phrase id="fldcaption" value="created at" />
       </field>
       <field id="updated_at">
-        <phrase id="fldcaption" value="updated at" />
+        <phrase id="fldcaption" value="update at" />
+      </field>
+    </table>
+    <table id="statuslevels">
+      <phrase id="tblcaption" value="statuslevels" />
+      <field id="statuslevelid">
+        <phrase id="fldcaption" value="statuslevelid" />
+      </field>
+      <field id="statuslevelname">
+        <phrase id="fldcaption" value="statuslevelname" />
       </field>
     </table>
   </project>

@@ -6436,6 +6436,30 @@ function SetupLoginStatus()
     $LoginStatus["loginUrl"] = $loginUrl;
     $LoginStatus["loginText"] = $Language->phrase("Login");
     $LoginStatus["canLogin"] = $loginPage && $loginUrl && !IsLoggedIn();
+    $resetPasswordPage = "resetpassword";
+    $resetPasswordUrl = "";
+    if ($currentPage != $resetPasswordPage) {
+        $resetPasswordUrl = "window.location='" . GetUrl($resetPasswordPage) . "';return false;";
+    }
+    $LoginStatus["resetPasswordUrl"] = $resetPasswordUrl;
+    $LoginStatus["resetPasswordText"] = $Language->phrase("ResetPassword");
+    $LoginStatus["canResetPassword"] = $resetPasswordUrl && !IsLoggedIn();
+    $registerPage = "register";
+    $registerUrl = "";
+    if ($currentPage != $registerPage) {
+        $registerUrl = "window.location='" . GetUrl($registerPage) . "';return false;";
+    }
+    $LoginStatus["registerUrl"] = $registerUrl;
+    $LoginStatus["registerText"] = $Language->phrase("Register");
+    $LoginStatus["canRegister"] = $registerUrl && !IsLoggedIn();
+    $changePasswordPage = "changepassword";
+    $changePasswordUrl = "";
+    if ($currentPage != $changePasswordPage) {
+        $changePasswordUrl = "window.location='" . GetUrl($changePasswordPage) . "';return false;";
+    }
+    $LoginStatus["changePasswordUrl"] = $changePasswordUrl;
+    $LoginStatus["changePasswordText"] = $Language->phrase("ChangePassword");
+    $LoginStatus["canChangePassword"] = $changePasswordUrl && IsLoggedIn() && !IsSysAdmin();
     $personalDataPage = "personaldata";
     $personalDataUrl = "";
     if ($currentPage != $personalDataPage) {

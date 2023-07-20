@@ -461,17 +461,24 @@ class UsersAdd extends Users
         // Is modal
         $this->IsModal = Param("modal") == "1";
 
+        // Update last accessed time
+        if (!$UserProfile->isValidUser(CurrentUserName(), session_id())) {
+            Write($Language->phrase("UserProfileCorrupted"));
+            $this->terminate();
+            return;
+        }
+
         // Create form object
         $CurrentForm = new HttpForm();
         $this->CurrentAction = Param("action"); // Set up current action
         $this->id->Visible = false;
         $this->name->setVisibility();
         $this->_email->setVisibility();
-        $this->email_verified_at->setVisibility();
+        $this->email_verified_at->Visible = false;
         $this->_password->setVisibility();
-        $this->remember_token->setVisibility();
-        $this->created_at->setVisibility();
-        $this->updated_at->setVisibility();
+        $this->remember_token->Visible = false;
+        $this->created_at->Visible = false;
+        $this->updated_at->Visible = false;
         $this->level->setVisibility();
         $this->hideFieldsForAddEdit();
 
@@ -666,17 +673,6 @@ class UsersAdd extends Users
             }
         }
 
-        // Check field name 'email_verified_at' first before field var 'x_email_verified_at'
-        $val = $CurrentForm->hasValue("email_verified_at") ? $CurrentForm->getValue("email_verified_at") : $CurrentForm->getValue("x_email_verified_at");
-        if (!$this->email_verified_at->IsDetailKey) {
-            if (IsApi() && $val === null) {
-                $this->email_verified_at->Visible = false; // Disable update for API request
-            } else {
-                $this->email_verified_at->setFormValue($val);
-            }
-            $this->email_verified_at->CurrentValue = UnFormatDateTime($this->email_verified_at->CurrentValue, 0);
-        }
-
         // Check field name 'password' first before field var 'x__password'
         $val = $CurrentForm->hasValue("password") ? $CurrentForm->getValue("password") : $CurrentForm->getValue("x__password");
         if (!$this->_password->IsDetailKey) {
@@ -685,38 +681,6 @@ class UsersAdd extends Users
             } else {
                 $this->_password->setFormValue($val);
             }
-        }
-
-        // Check field name 'remember_token' first before field var 'x_remember_token'
-        $val = $CurrentForm->hasValue("remember_token") ? $CurrentForm->getValue("remember_token") : $CurrentForm->getValue("x_remember_token");
-        if (!$this->remember_token->IsDetailKey) {
-            if (IsApi() && $val === null) {
-                $this->remember_token->Visible = false; // Disable update for API request
-            } else {
-                $this->remember_token->setFormValue($val);
-            }
-        }
-
-        // Check field name 'created_at' first before field var 'x_created_at'
-        $val = $CurrentForm->hasValue("created_at") ? $CurrentForm->getValue("created_at") : $CurrentForm->getValue("x_created_at");
-        if (!$this->created_at->IsDetailKey) {
-            if (IsApi() && $val === null) {
-                $this->created_at->Visible = false; // Disable update for API request
-            } else {
-                $this->created_at->setFormValue($val);
-            }
-            $this->created_at->CurrentValue = UnFormatDateTime($this->created_at->CurrentValue, 0);
-        }
-
-        // Check field name 'updated_at' first before field var 'x_updated_at'
-        $val = $CurrentForm->hasValue("updated_at") ? $CurrentForm->getValue("updated_at") : $CurrentForm->getValue("x_updated_at");
-        if (!$this->updated_at->IsDetailKey) {
-            if (IsApi() && $val === null) {
-                $this->updated_at->Visible = false; // Disable update for API request
-            } else {
-                $this->updated_at->setFormValue($val);
-            }
-            $this->updated_at->CurrentValue = UnFormatDateTime($this->updated_at->CurrentValue, 0);
         }
 
         // Check field name 'level' first before field var 'x_level'
@@ -739,14 +703,7 @@ class UsersAdd extends Users
         global $CurrentForm;
         $this->name->CurrentValue = $this->name->FormValue;
         $this->_email->CurrentValue = $this->_email->FormValue;
-        $this->email_verified_at->CurrentValue = $this->email_verified_at->FormValue;
-        $this->email_verified_at->CurrentValue = UnFormatDateTime($this->email_verified_at->CurrentValue, 0);
         $this->_password->CurrentValue = $this->_password->FormValue;
-        $this->remember_token->CurrentValue = $this->remember_token->FormValue;
-        $this->created_at->CurrentValue = $this->created_at->FormValue;
-        $this->created_at->CurrentValue = UnFormatDateTime($this->created_at->CurrentValue, 0);
-        $this->updated_at->CurrentValue = $this->updated_at->FormValue;
-        $this->updated_at->CurrentValue = UnFormatDateTime($this->updated_at->CurrentValue, 0);
         $this->level->CurrentValue = $this->level->FormValue;
     }
 
@@ -889,7 +846,7 @@ class UsersAdd extends Users
             $this->email_verified_at->ViewCustomAttributes = "";
 
             // password
-            $this->_password->ViewValue = $this->_password->CurrentValue;
+            $this->_password->ViewValue = $Language->phrase("PasswordMask");
             $this->_password->ViewCustomAttributes = "";
 
             // remember_token
@@ -941,30 +898,10 @@ class UsersAdd extends Users
             $this->_email->HrefValue = "";
             $this->_email->TooltipValue = "";
 
-            // email_verified_at
-            $this->email_verified_at->LinkCustomAttributes = "";
-            $this->email_verified_at->HrefValue = "";
-            $this->email_verified_at->TooltipValue = "";
-
             // password
             $this->_password->LinkCustomAttributes = "";
             $this->_password->HrefValue = "";
             $this->_password->TooltipValue = "";
-
-            // remember_token
-            $this->remember_token->LinkCustomAttributes = "";
-            $this->remember_token->HrefValue = "";
-            $this->remember_token->TooltipValue = "";
-
-            // created_at
-            $this->created_at->LinkCustomAttributes = "";
-            $this->created_at->HrefValue = "";
-            $this->created_at->TooltipValue = "";
-
-            // updated_at
-            $this->updated_at->LinkCustomAttributes = "";
-            $this->updated_at->HrefValue = "";
-            $this->updated_at->TooltipValue = "";
 
             // level
             $this->level->LinkCustomAttributes = "";
@@ -989,41 +926,10 @@ class UsersAdd extends Users
             $this->_email->EditValue = HtmlEncode($this->_email->CurrentValue);
             $this->_email->PlaceHolder = RemoveHtml($this->_email->caption());
 
-            // email_verified_at
-            $this->email_verified_at->EditAttrs["class"] = "form-control";
-            $this->email_verified_at->EditCustomAttributes = "";
-            $this->email_verified_at->EditValue = HtmlEncode(FormatDateTime($this->email_verified_at->CurrentValue, 8));
-            $this->email_verified_at->PlaceHolder = RemoveHtml($this->email_verified_at->caption());
-
             // password
             $this->_password->EditAttrs["class"] = "form-control";
             $this->_password->EditCustomAttributes = "";
-            if (!$this->_password->Raw) {
-                $this->_password->CurrentValue = HtmlDecode($this->_password->CurrentValue);
-            }
-            $this->_password->EditValue = HtmlEncode($this->_password->CurrentValue);
             $this->_password->PlaceHolder = RemoveHtml($this->_password->caption());
-
-            // remember_token
-            $this->remember_token->EditAttrs["class"] = "form-control";
-            $this->remember_token->EditCustomAttributes = "";
-            if (!$this->remember_token->Raw) {
-                $this->remember_token->CurrentValue = HtmlDecode($this->remember_token->CurrentValue);
-            }
-            $this->remember_token->EditValue = HtmlEncode($this->remember_token->CurrentValue);
-            $this->remember_token->PlaceHolder = RemoveHtml($this->remember_token->caption());
-
-            // created_at
-            $this->created_at->EditAttrs["class"] = "form-control";
-            $this->created_at->EditCustomAttributes = "";
-            $this->created_at->EditValue = HtmlEncode(FormatDateTime($this->created_at->CurrentValue, 8));
-            $this->created_at->PlaceHolder = RemoveHtml($this->created_at->caption());
-
-            // updated_at
-            $this->updated_at->EditAttrs["class"] = "form-control";
-            $this->updated_at->EditCustomAttributes = "";
-            $this->updated_at->EditValue = HtmlEncode(FormatDateTime($this->updated_at->CurrentValue, 8));
-            $this->updated_at->PlaceHolder = RemoveHtml($this->updated_at->caption());
 
             // level
             $this->level->EditAttrs["class"] = "form-control";
@@ -1064,25 +970,9 @@ class UsersAdd extends Users
             $this->_email->LinkCustomAttributes = "";
             $this->_email->HrefValue = "";
 
-            // email_verified_at
-            $this->email_verified_at->LinkCustomAttributes = "";
-            $this->email_verified_at->HrefValue = "";
-
             // password
             $this->_password->LinkCustomAttributes = "";
             $this->_password->HrefValue = "";
-
-            // remember_token
-            $this->remember_token->LinkCustomAttributes = "";
-            $this->remember_token->HrefValue = "";
-
-            // created_at
-            $this->created_at->LinkCustomAttributes = "";
-            $this->created_at->HrefValue = "";
-
-            // updated_at
-            $this->updated_at->LinkCustomAttributes = "";
-            $this->updated_at->HrefValue = "";
 
             // level
             $this->level->LinkCustomAttributes = "";
@@ -1120,14 +1010,6 @@ class UsersAdd extends Users
                 $this->_email->addErrorMessage(str_replace("%s", $this->_email->caption(), $this->_email->RequiredErrorMessage));
             }
         }
-        if ($this->email_verified_at->Required) {
-            if (!$this->email_verified_at->IsDetailKey && EmptyValue($this->email_verified_at->FormValue)) {
-                $this->email_verified_at->addErrorMessage(str_replace("%s", $this->email_verified_at->caption(), $this->email_verified_at->RequiredErrorMessage));
-            }
-        }
-        if (!CheckDate($this->email_verified_at->FormValue)) {
-            $this->email_verified_at->addErrorMessage($this->email_verified_at->getErrorMessage(false));
-        }
         if ($this->_password->Required) {
             if (!$this->_password->IsDetailKey && EmptyValue($this->_password->FormValue)) {
                 $this->_password->addErrorMessage(str_replace("%s", $this->_password->caption(), $this->_password->RequiredErrorMessage));
@@ -1135,27 +1017,6 @@ class UsersAdd extends Users
         }
         if (!$this->_password->Raw && Config("REMOVE_XSS") && CheckPassword($this->_password->FormValue)) {
             $this->_password->addErrorMessage($Language->phrase("InvalidPasswordChars"));
-        }
-        if ($this->remember_token->Required) {
-            if (!$this->remember_token->IsDetailKey && EmptyValue($this->remember_token->FormValue)) {
-                $this->remember_token->addErrorMessage(str_replace("%s", $this->remember_token->caption(), $this->remember_token->RequiredErrorMessage));
-            }
-        }
-        if ($this->created_at->Required) {
-            if (!$this->created_at->IsDetailKey && EmptyValue($this->created_at->FormValue)) {
-                $this->created_at->addErrorMessage(str_replace("%s", $this->created_at->caption(), $this->created_at->RequiredErrorMessage));
-            }
-        }
-        if (!CheckDate($this->created_at->FormValue)) {
-            $this->created_at->addErrorMessage($this->created_at->getErrorMessage(false));
-        }
-        if ($this->updated_at->Required) {
-            if (!$this->updated_at->IsDetailKey && EmptyValue($this->updated_at->FormValue)) {
-                $this->updated_at->addErrorMessage(str_replace("%s", $this->updated_at->caption(), $this->updated_at->RequiredErrorMessage));
-            }
-        }
-        if (!CheckDate($this->updated_at->FormValue)) {
-            $this->updated_at->addErrorMessage($this->updated_at->getErrorMessage(false));
         }
         if ($this->level->Required) {
             if (!$this->level->IsDetailKey && EmptyValue($this->level->FormValue)) {
@@ -1203,20 +1064,10 @@ class UsersAdd extends Users
         // email
         $this->_email->setDbValueDef($rsnew, $this->_email->CurrentValue, "", false);
 
-        // email_verified_at
-        $this->email_verified_at->setDbValueDef($rsnew, UnFormatDateTime($this->email_verified_at->CurrentValue, 0), null, false);
-
         // password
-        $this->_password->setDbValueDef($rsnew, $this->_password->CurrentValue, "", false);
-
-        // remember_token
-        $this->remember_token->setDbValueDef($rsnew, $this->remember_token->CurrentValue, null, false);
-
-        // created_at
-        $this->created_at->setDbValueDef($rsnew, UnFormatDateTime($this->created_at->CurrentValue, 0), null, false);
-
-        // updated_at
-        $this->updated_at->setDbValueDef($rsnew, UnFormatDateTime($this->updated_at->CurrentValue, 0), null, false);
+        if (!IsMaskedPassword($this->_password->CurrentValue)) {
+            $this->_password->setDbValueDef($rsnew, $this->_password->CurrentValue, "", false);
+        }
 
         // level
         if ($Security->canAdmin()) { // System admin

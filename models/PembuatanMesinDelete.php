@@ -373,8 +373,15 @@ class PembuatanMesinDelete extends PembuatanMesin
     public function run()
     {
         global $ExportType, $CustomExportType, $ExportFileName, $UserProfile, $Language, $Security, $CurrentForm;
+
+        // Update last accessed time
+        if (!$UserProfile->isValidUser(CurrentUserName(), session_id())) {
+            Write($Language->phrase("UserProfileCorrupted"));
+            $this->terminate();
+            return;
+        }
         $this->CurrentAction = Param("action"); // Set up current action
-        $this->id->Visible = false;
+        $this->id->setVisibility();
         $this->nama_mesin->setVisibility();
         $this->spesifikasi->setVisibility();
         $this->jumlah->setVisibility();
@@ -384,8 +391,10 @@ class PembuatanMesinDelete extends PembuatanMesin
         $this->nomor_kontrak->Visible = false;
         $this->tanggal_kontrak->setVisibility();
         $this->nilai_kontrak->Visible = false;
+        $this->foto_kontrak->Visible = false;
         $this->upload_ktp->Visible = false;
         $this->foto_mesin->setVisibility();
+        $this->status->setVisibility();
         $this->created_at->Visible = false;
         $this->updated_at->Visible = false;
         $this->hideFieldsForAddEdit();
@@ -560,10 +569,13 @@ class PembuatanMesinDelete extends PembuatanMesin
         $this->nomor_kontrak->setDbValue($row['nomor_kontrak']);
         $this->tanggal_kontrak->setDbValue($row['tanggal_kontrak']);
         $this->nilai_kontrak->setDbValue($row['nilai_kontrak']);
+        $this->foto_kontrak->Upload->DbValue = $row['foto_kontrak'];
+        $this->foto_kontrak->setDbValue($this->foto_kontrak->Upload->DbValue);
         $this->upload_ktp->Upload->DbValue = $row['upload_ktp'];
         $this->upload_ktp->setDbValue($this->upload_ktp->Upload->DbValue);
         $this->foto_mesin->Upload->DbValue = $row['foto_mesin'];
         $this->foto_mesin->setDbValue($this->foto_mesin->Upload->DbValue);
+        $this->status->setDbValue($row['status']);
         $this->created_at->setDbValue($row['created_at']);
         $this->updated_at->setDbValue($row['updated_at']);
     }
@@ -582,8 +594,10 @@ class PembuatanMesinDelete extends PembuatanMesin
         $row['nomor_kontrak'] = null;
         $row['tanggal_kontrak'] = null;
         $row['nilai_kontrak'] = null;
+        $row['foto_kontrak'] = null;
         $row['upload_ktp'] = null;
         $row['foto_mesin'] = null;
+        $row['status'] = null;
         $row['created_at'] = null;
         $row['updated_at'] = null;
         return $row;
@@ -621,9 +635,13 @@ class PembuatanMesinDelete extends PembuatanMesin
 
         // nilai_kontrak
 
+        // foto_kontrak
+
         // upload_ktp
 
         // foto_mesin
+
+        // status
 
         // created_at
 
@@ -670,6 +688,17 @@ class PembuatanMesinDelete extends PembuatanMesin
             $this->nilai_kontrak->ViewValue = $this->nilai_kontrak->CurrentValue;
             $this->nilai_kontrak->ViewCustomAttributes = "";
 
+            // foto_kontrak
+            if (!EmptyValue($this->foto_kontrak->Upload->DbValue)) {
+                $this->foto_kontrak->ImageWidth = 200;
+                $this->foto_kontrak->ImageHeight = 0;
+                $this->foto_kontrak->ImageAlt = $this->foto_kontrak->alt();
+                $this->foto_kontrak->ViewValue = $this->foto_kontrak->Upload->DbValue;
+            } else {
+                $this->foto_kontrak->ViewValue = "";
+            }
+            $this->foto_kontrak->ViewCustomAttributes = "";
+
             // upload_ktp
             if (!EmptyValue($this->upload_ktp->Upload->DbValue)) {
                 $this->upload_ktp->ImageWidth = 200;
@@ -692,6 +721,14 @@ class PembuatanMesinDelete extends PembuatanMesin
             }
             $this->foto_mesin->ViewCustomAttributes = "";
 
+            // status
+            if (strval($this->status->CurrentValue) != "") {
+                $this->status->ViewValue = $this->status->optionCaption($this->status->CurrentValue);
+            } else {
+                $this->status->ViewValue = null;
+            }
+            $this->status->ViewCustomAttributes = "";
+
             // created_at
             $this->created_at->ViewValue = $this->created_at->CurrentValue;
             $this->created_at->ViewValue = FormatDateTime($this->created_at->ViewValue, 0);
@@ -701,6 +738,11 @@ class PembuatanMesinDelete extends PembuatanMesin
             $this->updated_at->ViewValue = $this->updated_at->CurrentValue;
             $this->updated_at->ViewValue = FormatDateTime($this->updated_at->ViewValue, 0);
             $this->updated_at->ViewCustomAttributes = "";
+
+            // id
+            $this->id->LinkCustomAttributes = "";
+            $this->id->HrefValue = "";
+            $this->id->TooltipValue = "";
 
             // nama_mesin
             $this->nama_mesin->LinkCustomAttributes = "";
@@ -757,6 +799,11 @@ class PembuatanMesinDelete extends PembuatanMesin
                 $this->foto_mesin->LinkAttrs["data-rel"] = "pembuatan_mesin_x_foto_mesin";
                 $this->foto_mesin->LinkAttrs->appendClass("ew-lightbox");
             }
+
+            // status
+            $this->status->LinkCustomAttributes = "";
+            $this->status->HrefValue = "";
+            $this->status->TooltipValue = "";
         }
 
         // Call Row Rendered event
@@ -872,6 +919,8 @@ class PembuatanMesinDelete extends PembuatanMesin
 
             // Set up lookup SQL and connection
             switch ($fld->FieldVar) {
+                case "x_status":
+                    break;
                 default:
                     $lookupFilter = "";
                     break;
